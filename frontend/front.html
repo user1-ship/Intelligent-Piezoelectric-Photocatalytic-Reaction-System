@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能压电光催化控制平台</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 图标 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <!-- Chart.js 图表库 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <style>
+        /* 自定义样式 */
+        .sidebar {
+            min-height: calc(100vh - 56px);
+            background-color: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+        }
+        .card-header {
+            background-color: #0d6efd;
+            color: white;
+        }
+        .sensor-card {
+            transition: transform 0.2s;
+        }
+        .sensor-card:hover {
+            transform: translateY(-5px);
+        }
+        .fault-indicator {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .fault-active {
+            background-color: #dc3545;
+        }
+        .fault-inactive {
+            background-color: #198754;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="front.html">
+                <i class="fa fa-industry me-2"></i>智能压电光催化装置控制平台
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="front.html"><i class="fa fa-dashboard me-1"></i>数据中心</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="history.html"><i class="fa fa-history me-1"></i>历史数据</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="config.html"><i class="fa fa-cog me-1"></i>系统配置</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="help.html"><i class="fa fa-question-circle me-1"></i>帮助</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <div class="container-fluid" style="margin-top: 56px;">
+        <div class="row">
+            <!-- 侧边栏 -->
+            <div class="col-md-2 d-none d-md-block sidebar p-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-2">
+                        <a class="nav-link active bg-primary text-white" href="#sensor-data">
+                            <i class="fa fa-sitemap me-2"></i>装置实时数据
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a class="nav-link text-dark" href="#sensor-fusion">
+                            <i class="fa fa-object-group me-2"></i>数据融合中心
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a class="nav-link text-dark" href="#control-system">
+                            <i class="fa fa-sliders me-2"></i>装置控制系统
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a class="nav-link text-dark" href="#digital-twin">
+                            <i class="fa fa-cube me-2"></i>数字孪生系统
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a class="nav-link text-dark" href="#learning-system">
+                            <i class="fa fa-graduation-cap me-2"></i>强化学习系统
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a class="nav-link text-dark" href="#fault-diagnosis">
+                            <i class="fa fa-exclamation-triangle me-2"></i>故障诊断中心
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 主内容面板 -->
+            <main class="col-md-10 ms-sm-auto px-4">
+                <!-- 1. 装置实时数据面板 -->
+                <section id="sensor-data" class="my-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fa fa-sitemap me-2"></i>装置实时数据</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-4">
+                                <!-- 流量传感器 -->
+                                <div class="col-md-4 col-sm-6">
+                                    <div class="card sensor-card h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-title text-center">流量 <small>(cm/s)</small></h6>
+                                            <div class="display-4 text-center mb-3" data-sensor="flow">28.5</div>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span>数据质量</span>
+                                                <div class="progress" style="width: 70%; height: 10px;">
+                                                    <div class="progress-bar bg-success" role="progressbar" style="width: 95%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 污染物浓度 -->
+                                <div class="col-md-4 col-sm-6">
+                                    <div class="card sensor-card h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-title text-center">污染物浓度 <small>(ppm)</small></h6>
+                                            <div class="display-4 text-center mb-3" data-sensor="pollution">156.8</div>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span>数据质量</span>
+                                                <div class="progress" style="width: 70%; height: 10px;">
+                                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 82%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 光照强度 -->
+                                <div class="col-md-4 col-sm-6">
+                                    <div class="card sensor-card h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-title text-center">光照强度 <small>(lux)</small></h6>
+                                            <div class="display-4 text-center mb-3" data-sensor="light">890.2</div>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span>数据质量</span>
+                                                <div class="progress" style="width: 70%; height: 10px;">
+                                                    <div class="progress-bar bg-success" role="progressbar" style="width: 98%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- pH值 -->
+                                <div class="col-md-4 col-sm-6">
+                                    <div class="card sensor-card h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-title text-center">pH值</h6>
+                                            <div class="display-4 text-center mb-3" data-sensor="ph">7.2</div>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span>数据质量</span>
+                                                <div class="progress" style="width: 70%; height: 10px;">
+                                                    <div class="progress-bar bg-success" role="progressbar" style="width: 90%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 温度 -->
+                                <div class="col-md-4 col-sm-6">
+                                    <div class="card sensor-card h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-title text-center">温度 <small>(°C)</small></h6>
+                                            <div class="display-4 text-center mb-3" data-sensor="temperature">25.8</div>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span>数据质量</span>
+                                                <div class="progress" style="width: 70%; height: 10px;">
+                                                    <div class="progress-bar bg-success" role="progressbar" style="width: 99%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 能耗 -->
+                                <div class="col-md-4 col-sm-6">
+                                    <div class="card sensor-card h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-title text-center">能耗 <small>(%)</small></h6>
+                                            <div class="display-4 text-center mb-3" data-sensor="energy">68.4</div>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span>数据质量</span>
+                                                <div class="progress" style="width: 70%; height: 10px;">
+                                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 85%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 装置反应数据趋势图表 -->
+                            <div class="mt-5">
+                                <h5>反应数据趋势</h5>
+                                <div class="chart-container" style="height: 300px;">
+                                    <canvas id="sensorTrendChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. 数据融合中心面板 -->
+                <section id="sensor-fusion" class="my-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fa fa-object-group me-2"></i>装置数据融合</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-title">融合后核心指标</h6>
+                                            <div class="display-3 text-center mb-3">162.4</div>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span>融合置信度</span>
+                                                <div class="progress" style="width: 70%; height: 10px;">
+                                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 92%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-title">传感器融合权重</h6>
+                                            <div class="chart-container" style="height: 200px;">
+                                                <canvas id="sensorWeightsChart"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 卡尔曼滤波参数 -->
+                            <div class="mt-4">
+                                <h6>动态数据智能校准参数</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>传感器索引</th>
+                                                <th>预估值</th>
+                                                <th>预估误差</th>
+                                                <th>过程误差</th>
+                                                <th>测量误差</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>0 (流量)</td>
+                                                <td>28.2</td>
+                                                <td>0.05</td>
+                                                <td>0.01</td>
+                                                <td>0.1</td>
+                                            </tr>
+                                            <tr>
+                                                <td>1 (污染物)</td>
+                                                <td>155.9</td>
+                                                <td>0.08</td>
+                                                <td>0.02</td>
+                                                <td>0.15</td>
+                                            </tr>
+                                            <tr>
+                                                <td>2 (光照)</td>
+                                                <td>889.7</td>
+                                                <td>0.03</td>
+                                                <td>0.01</td>
+                                                <td>0.08</td>
+                                            </tr>
+                                            <tr>
+                                                <td>3 (pH)</td>
+                                                <td>7.18</td>
+                                                <td>0.04</td>
+                                                <td>0.01</td>
+                                                <td>0.09</td>
+                                            </tr>
+                                            <tr>
+                                                <td>4 (温度)</td>
+                                                <td>25.75</td>
+                                                <td>0.02</td>
+                                                <td>0.01</td>
+                                                <td>0.05</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. 装置控制系统面板 -->
+                <section id="control-system" class="my-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fa fa-sliders me-2"></i>控制系统数据</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-4">
+                                <div class="col-md-4">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-title">控制输出</h6>
+                                            <div class="display-4 text-center mb-3">75.2%</div>
+                                            <div class="d-flex justify-content-center">
+                                                <input type="range" class="form-range w-75" min="0" max="100" value="75.2" id="controlOutputSlider">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-title">当前控制模式</h6>
+                                            <div class="display-5 text-center mb-3 text-primary">标准模式</div>
+                                            <div class="d-flex justify-content-center">
+                                                <select class="form-select w-75">
+                                                    <option value="0">节能模式</option>
+                                                    <option value="1" selected>标准模式</option>
+                                                    <option value="2">高效模式</option>
+                                                    <option value="3">冲击负荷模式</option>
+                                                    <option value="4">维护模式</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-title">系统效率</h6>
+                                            <div class="display-4 text-center mb-3">89.6%</div>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span>效率趋势</span>
+                                                <span class="text-success"><i class="fa fa-arrow-up"></i> 2.3%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 控制决策信息 -->
+                            <div class="mt-4">
+                                <h6>决策理由</h6>
+                                <div class="card bg-light p-3">
+                                    <p class="mb-0">当前污染物浓度为156.8ppm，温度25.8°C，系统效率89.6%，采用标准控制模式，控制输出调整至75.2%以平衡能耗和净化效率。冲击负荷检测为阴性，无需增强控制输出。</p>
+                                </div>
+                            </div>
+
+                            <!-- MPC参数 -->
+                            <div class="mt-4">
+                                <h6>模型预测控制参数</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>预测范围</th>
+                                                <th>控制范围</th>
+                                                <th>核心控制目标重要度</th>
+                                                <th>次要控制目标重要度	</th>
+                                                <th>辅助控制目标重要度</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>10.0</td>
+                                                <td>5.0</td>
+                                                <td>0.8</td>
+                                                <td>0.15</td>
+                                                <td>0.05</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. 数字孪生系统面板 -->
+                <section id="digital-twin" class="my-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fa fa-cube me-2"></i>数字孪生系统数据</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-4">
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="card h-100">
+                                        <div class="card-body text-center">
+                                            <h6 class="card-title">预测污染物浓度</h6>
+                                            <div class="display-5 mb-2">152.3 ppm</div>
+                                            <span class="text-success"><i class="fa fa-arrow-down"></i> 2.9%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="card h-100">
+                                        <div class="card-body text-center">
+                                            <h6 class="card-title">预测系统效率</h6>
+                                            <div class="display-5 mb-2">91.2 %</div>
+                                            <span class="text-success"><i class="fa fa-arrow-up"></i> 1.8%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="card h-100">
+                                        <div class="card-body text-center">
+                                            <h6 class="card-title">剩余寿命</h6>
+                                            <div class="display-5 mb-2">87.5 %</div>
+                                            <span class="text-warning"><i class="fa fa-arrow-down"></i> 0.3%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="card h-100">
+                                        <div class="card-body text-center">
+                                            <h6 class="card-title">系统健康度</h6>
+                                            <div class="display-5 mb-2">92.8 %</div>
+                                            <span class="text-success"><i class="fa fa-arrow-up"></i> 0.5%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 数字孪生系统趋势图表 -->
+                            <div class="mt-5">
+                                <h5>数字孪生系统预测趋势</h5>
+                                <div class="chart-container" style="height: 300px;">
+                                    <canvas id="digitalTwinChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. 强化学习系统面板 -->
+                <section id="learning-system" class="my-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fa fa-graduation-cap me-2"></i>强化学习系统数据</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <h6>最优PID参数</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>反应速度调节</th>
+                                                    <th>残留误差消除</th>
+                                                    <th>波动预判调节</th>
+                                                    <th>学习样本数</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>2.85</td>
+                                                    <td>0.42</td>
+                                                    <td>0.18</td>
+                                                    <td>1258</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>强化学习参数</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>新策略尝试概率</th>
+                                                    <th>策略表更新次数</th>
+                                                    <th>累计表现得分</th>
+                                                    <th>最优工况参数</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>0.085</td>
+                                                    <td>2458</td>
+                                                    <td>896.4</td>
+                                                    <td>18</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 传感器融合权重调整 -->
+                            <div class="mt-4">
+                                <h6>自适应融合权重</h6>
+                                <div class="chart-container" style="height: 250px;">
+                                    <canvas id="fusionWeightsChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 6. 故障诊断中心面板 -->
+                <section id="fault-diagnosis" class="my-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fa fa-exclamation-triangle me-2"></i>故障诊断与补偿</h5>
+                        </div>
+                        <div class="card-body">
+                            <h6>装置故障状态</h6>
+                            <div class="table-responsive mb-4">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>装置元件</th>
+                                            <th>故障状态</th>
+                                            <th>数据质量</th>
+                                            <th>补偿值</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>流量传感器</td>
+                                            <td><span class="fault-indicator fault-inactive"></span> 正常</td>
+                                            <td>95%</td>
+                                            <td>-</td>
+                                            <td><button class="btn btn-sm btn-outline-primary">校准</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td>污染物传感器</td>
+                                            <td><span class="fault-indicator fault-inactive"></span> 正常</td>
+                                            <td>82%</td>
+                                            <td>-</td>
+                                            <td><button class="btn btn-sm btn-outline-primary">校准</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td>光照传感器</td>
+                                            <td><span class="fault-indicator fault-inactive"></span> 正常</td>
+                                            <td>98%</td>
+                                            <td>-</td>
+                                            <td><button class="btn btn-sm btn-outline-primary">校准</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td>pH传感器</td>
+                                            <td><span class="fault-indicator fault-inactive"></span> 正常</td>
+                                            <td>90%</td>
+                                            <td>-</td>
+                                            <td><button class="btn btn-sm btn-outline-primary">校准</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td>温度传感器</td>
+                                            <td><span class="fault-indicator fault-active"></span> 异常</td>
+                                            <td>65%</td>
+                                            <td>25.6°C</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-warning">补偿</button>
+                                                <button class="btn btn-sm btn-outline-danger">更换</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- 故障日志 -->
+                            <h6>近期故障日志</h6>
+                            <div class="card bg-light p-3 mb-0">
+                                <div class="row mb-2 pb-2 border-bottom">
+                                    <div class="col-md-2">2024-05-20 14:35</div>
+                                    <div class="col-md-2"><span class="badge bg-warning">警告</span></div>
+                                    <div class="col-md-8">温度传感器数据波动过大，已自动补偿</div>
+                                </div>
+                                <div class="row mb-2 pb-2 border-bottom">
+                                    <div class="col-md-2">2024-05-20 10:12</div>
+                                    <div class="col-md-2"><span class="badge bg-info">信息</span></div>
+                                    <div class="col-md-8">污染物传感器校准完成，数据质量提升至82%</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2">2024-05-19 18:45</div>
+                                    <div class="col-md-2"><span class="badge bg-danger">错误</span></div>
+                                    <div class="col-md-8">pH传感器通信中断，已切换至备用传感器</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-light py-3 mt-5">
+        <div class="container-fluid text-center">
+            <p class="mb-0 text-muted">工业控制系统数据管理平台 © 2024 | 版本 v1.0.0</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 加载实时数据
+        async function loadRealtimeData() {
+            try {
+                const response = await fetch('http://localhost:8000/api/sensors');
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    // 使用 data-sensor 属性更新数据
+                    const sensors = ['flow', 'pollution', 'light', 'ph', 'temperature', 'energy'];
+                    
+                    sensors.forEach(sensor => {
+                        const element = document.querySelector(`[data-sensor="${sensor}"]`);
+                        if (element && data.data[sensor]) {
+                            element.textContent = data.data[sensor].value.toFixed(1);
+                        }
+                    });
+                    
+                    // 更新数据质量进度条
+                    updateQualityBars(data.data);
+                }
+            } catch (error) {
+                console.error('获取实时数据失败:', error);
+            }
+        }
+
+        // 更新数据质量进度条
+        function updateQualityBars(sensorData) {
+            // 这里简化处理，实际应该根据具体元素更新
+            console.log('传感器数据:', sensorData);
+        }
+
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查登录状态
+            const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+            if (!token) {
+                // 未登录，跳转到登录页
+                window.location.href = 'log.html';
+                return;
+            }
+            
+            // 加载用户信息
+            const userInfo = JSON.parse(localStorage.getItem('user_info') || '{}');
+            if (userInfo.username) {
+                console.log('当前用户:', userInfo.username, '角色:', userInfo.role);
+            }
+            
+            // 首次加载数据
+            loadRealtimeData();
+            
+            // 定时刷新数据（每5秒）
+            setInterval(loadRealtimeData, 5000);
+            
+            // 修改侧边栏链接，指向本地文件
+            document.querySelectorAll('a[href^="#"]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+
+            // 1. 传感器趋势图表
+            const sensorTrendCtx = document.getElementById('sensorTrendChart').getContext('2d');
+            new Chart(sensorTrendCtx, {
+                type: 'line',
+                data: {
+                    labels: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00'],
+                    datasets: [
+                        {
+                            label: '流量 (cm/s)',
+                            data: [25.8, 26.5, 27.2, 28.1, 28.5, 28.3, 28.5, 28.4],
+                            borderColor: '#0d6efd',
+                            backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: '污染物浓度 (ppm)',
+                            data: [165.2, 162.8, 160.5, 158.9, 157.2, 156.8, 157.5, 156.8],
+                            borderColor: '#dc3545',
+                            backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: '温度 (°C)',
+                            data: [24.5, 24.8, 25.1, 25.4, 25.6, 25.7, 25.8, 25.8],
+                            borderColor: '#ffc107',
+                            backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false
+                        }
+                    }
+                }
+            });
+
+            // 2. 传感器权重饼图
+            const sensorWeightsCtx = document.getElementById('sensorWeightsChart').getContext('2d');
+            new Chart(sensorWeightsCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['流量', '污染物浓度', '光照强度', 'pH值', '温度'],
+                    datasets: [{
+                        data: [0.15, 0.35, 0.1, 0.2, 0.2],
+                        backgroundColor: [
+                            '#0d6efd',
+                            '#dc3545',
+                            '#198754',
+                            '#ffc107',
+                            '#6c757d'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+
+            // 3. 数字孪生预测图表
+            const digitalTwinCtx = document.getElementById('digitalTwinChart').getContext('2d');
+            new Chart(digitalTwinCtx, {
+                type: 'line',
+                data: {
+                    labels: ['当前', '1h后', '2h后', '3h后', '4h后', '5h后', '6h后'],
+                    datasets: [
+                        {
+                            label: '实际污染物浓度 (ppm)',
+                            data: [156.8, 155.5, 154.2, 153.1, 152.5, 152.3, 152.0],
+                            borderColor: '#dc3545',
+                            tension: 0.3,
+                            fill: false
+                        },
+                        {
+                            label: '预测污染物浓度 (ppm)',
+                            data: [156.8, 155.2, 153.8, 152.9, 152.5, 152.3, 151.8],
+                            borderColor: '#6c757d',
+                            borderDash: [5, 5],
+                            tension: 0.3,
+                            fill: false
+                        },
+                        {
+                            label: '系统健康度 (%)',
+                            data: [92.8, 92.9, 93.0, 93.1, 93.2, 93.2, 93.3],
+                            borderColor: '#198754',
+                            tension: 0.3,
+                            fill: false,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: '污染物浓度 (ppm)'
+                            }
+                        },
+                        y1: {
+                            beginAtZero: false,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: '系统健康度 (%)'
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 4. 融合权重柱状图
+            const fusionWeightsCtx = document.getElementById('fusionWeightsChart').getContext('2d');
+            new Chart(fusionWeightsCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['流量', '污染物', '光照', 'pH值'],
+                    datasets: [
+                        {
+                            label: '初始权重',
+                            data: [0.25, 0.25, 0.25, 0.25],
+                            backgroundColor: '#6c757d'
+                        },
+                        {
+                            label: '自适应调整后权重',
+                            data: [0.2, 0.35, 0.15, 0.3],
+                            backgroundColor: '#0d6efd'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 0.5
+                        }
+                    }
+                }
+            });
+
+            // 控制输出滑块联动
+            const controlSlider = document.getElementById('controlOutputSlider');
+            controlSlider.addEventListener('input', function() {
+                // 可扩展：联动更新显示值和后端API
+                console.log('控制输出调整为：' + this.value + '%');
+            });
+        });
+    </script>
+</body>
+</html>

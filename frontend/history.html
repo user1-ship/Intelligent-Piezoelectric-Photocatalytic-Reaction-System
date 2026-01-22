@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>历史数据 - 智能压电光催化控制平台</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 图标 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <!-- Chart.js 图表库 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <!-- Date Range Picker -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <style>
+        /* 自定义样式 */
+        .sidebar {
+            min-height: calc(100vh - 56px);
+            background-color: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+        }
+        .card-header {
+            background-color: #0d6efd;
+            color: white;
+        }
+        .sensor-card {
+            transition: transform 0.2s;
+        }
+        .sensor-card:hover {
+            transform: translateY(-5px);
+        }
+        .fault-indicator {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .fault-active {
+            background-color: #dc3545;
+        }
+        .fault-inactive {
+            background-color: #198754;
+        }
+        .data-table thead th {
+            position: sticky;
+            top: 0;
+            background-color: #f8f9fa;
+            z-index: 10;
+        }
+        .date-range-picker {
+            max-width: 300px;
+        }
+        .export-btn {
+            min-width: 120px;
+        }
+        .trend-up {
+            color: #198754;
+        }
+        .trend-down {
+            color: #dc3545;
+        }
+        .data-point {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .data-point:hover {
+            background-color: rgba(13, 110, 253, 0.05);
+        }
+        /* 侧边栏导航样式 */
+        .nav-link-sub {
+            padding-left: 2.5rem !important;
+            font-size: 0.9rem;
+        }
+        .nav-link-sub.active {
+            background-color: #e7f1ff;
+            color: #0d6efd;
+            border-left: 3px solid #0d6efd;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="front.html">
+                <i class="fa fa-industry me-2"></i>智能压电光催化装置控制平台
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="front.html"><i class="fa fa-dashboard me-1"></i>数据中心</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="history.html"><i class="fa fa-history me-1"></i>历史数据</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="config.html"><i class="fa fa-cog me-1"></i>系统配置</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="help.html"><i class="fa fa-question-circle me-1"></i>帮助</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <div class="container-fluid" style="margin-top: 56px;">
+        <div class="row">
+            <!-- 侧边栏 -->
+            <div class="col-md-2 d-none d-md-block sidebar p-3">
+                <ul class="nav flex-column">
+                    </li>
+                    <!-- 历史数据查询 -->
+                    <li class="nav-item mb-1">
+                        <a class="nav-link active bg-primary text-white" href="#history-query">
+                            <i class="fa fa-search me-2"></i>历史数据查询
+                        </a>
+                    </li>
+                    <!-- 历史数据分析 -->
+                    <li class="nav-item mb-1">
+                        <a class="nav-link text-dark" href="#history-analysis">
+                            <i class="fa fa-line-chart me-2"></i>历史数据分析
+                        </a>
+                    </li>
+                    <!-- 详细历史数据 -->
+                    <li class="nav-item mb-1">
+                        <a class="nav-link text-dark" href="#history-details">
+                            <i class="fa fa-table me-2"></i>详细历史数据
+                        </a>
+                    </li>
+                    
+                    <!-- 分隔线 -->
+                    <li class="nav-item my-3">
+                        <hr class="my-1">
+                    </li>
+                    
+                    <!-- 返回数据中心链接 -->
+                    <li class="nav-item mb-2">
+                        <a class="nav-link text-dark" href="front.html">
+                            <i class="fa fa-arrow-left me-2"></i>返回数据中心
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 主内容面板 -->
+            <main class="col-md-10 ms-sm-auto px-4">
+                <!-- 1. 历史数据查询部分 -->
+                <section id="history-query" class="my-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fa fa-search me-2"></i>历史数据查询</h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- 查询条件 -->
+                            <div id="history-query-conditions" class="mb-5">
+                                <h6>查询条件</h6>
+                                <div class="card bg-light p-3">
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <label class="form-label">时间范围</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control date-range-picker" id="dateRange" value="2024-05-01 - 2024-05-20">
+                                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">数据类型</label>
+                                            <select class="form-select" id="dataType">
+                                                <option value="all">全部数据类型</option>
+                                                <option value="flow">流量数据</option>
+                                                <option value="pollution">污染物浓度数据</option>
+                                                <option value="light">光照强度数据</option>
+                                                <option value="ph">pH值数据</option>
+                                                <option value="temp">温度数据</option>
+                                                <option value="energy">能耗数据</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">数据频率</label>
+                                            <select class="form-select" id="dataFrequency">
+                                                <option value="raw">原始数据（每分钟）</option>
+                                                <option value="hourly">小时平均数据</option>
+                                                <option value="daily" selected>日平均数据</option>
+                                                <option value="weekly">周平均数据</option>
+                                                <option value="monthly">月平均数据</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-12 mt-2">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="showTrend" checked>
+                                                <label class="form-check-label" for="showTrend">显示趋势线</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="showAvg" checked>
+                                                <label class="form-check-label" for="showAvg">显示平均值</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="showMinMax">
+                                                <label class="form-check-label" for="showMinMax">显示最小/最大值</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 mt-3">
+                                            <button class="btn btn-primary me-2" id="queryBtn">
+                                                <i class="fa fa-search me-1"></i>查询数据
+                                            </button>
+                                            <button class="btn btn-outline-primary me-2" id="exportBtn">
+                                                <i class="fa fa-download me-1"></i>导出数据
+                                            </button>
+                                            <button class="btn btn-outline-secondary" id="resetBtn">
+                                                <i class="fa fa-refresh me-1"></i>重置条件
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 统计数据概览 -->
+                            <div id="history-query-statistics">
+                                <h6>数据统计概览 (2024-05-01 至 2024-05-20)</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-2 col-sm-4">
+                                        <div class="card sensor-card h-100">
+                                            <div class="card-body text-center">
+                                                <h6 class="card-title">数据总量</h6>
+                                                <div class="display-6 mb-1">28,650</div>
+                                                <small class="text-muted">条记录</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 col-sm-4">
+                                        <div class="card sensor-card h-100">
+                                            <div class="card-body text-center">
+                                                <h6 class="card-title">平均流量</h6>
+                                                <div class="display-6 mb-1">27.8</div>
+                                                <small class="text-muted">cm/s</small>
+                                                <div class="trend-up small"><i class="fa fa-arrow-up me-1"></i> 1.2%</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 col-sm-4">
+                                        <div class="card sensor-card h-100">
+                                            <div class="card-body text-center">
+                                                <h6 class="card-title">平均污染物</h6>
+                                                <div class="display-6 mb-1">158.4</div>
+                                                <small class="text-muted">ppm</small>
+                                                <div class="trend-down small"><i class="fa fa-arrow-down me-1"></i> 3.5%</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 col-sm-4">
+                                        <div class="card sensor-card h-100">
+                                            <div class="card-body text-center">
+                                                <h6 class="card-title">平均效率</h6>
+                                                <div class="display-6 mb-1">88.7</div>
+                                                <small class="text-muted">%</small>
+                                                <div class="trend-up small"><i class="fa fa-arrow-up me-1"></i> 2.1%</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 col-sm-4">
+                                        <div class="card sensor-card h-100">
+                                            <div class="card-body text-center">
+                                                <h6 class="card-title">平均能耗</h6>
+                                                <div class="display-6 mb-1">65.3</div>
+                                                <small class="text-muted">%</small>
+                                                <div class="trend-down small"><i class="fa fa-arrow-down me-1"></i> 4.2%</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 col-sm-4">
+                                        <div class="card sensor-card h-100">
+                                            <div class="card-body text-center">
+                                                <h6 class="card-title">数据完整率</h6>
+                                                <div class="display-6 mb-1">97.8</div>
+                                                <small class="text-muted">%</small>
+                                                <div class="trend-up small"><i class="fa fa-arrow-up me-1"></i> 0.5%</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. 历史数据分析部分 -->
+                <section id="history-analysis" class="my-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fa fa-line-chart me-2"></i>历史数据分析</h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- 历史数据趋势 -->
+                            <div id="history-analysis-trend" class="mb-5">
+                                <h6>历史数据趋势</h6>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="chart-container" style="height: 400px;">
+                                            <canvas id="historyChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 数据对比分析 -->
+                            <div class="row mb-4">
+                                <div id="history-analysis-comparison" class="col-md-6 mb-4 mb-md-0">
+                                    <h6>同期对比分析</h6>
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <div class="chart-container" style="height: 300px;">
+                                                <canvas id="comparisonChart"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="history-analysis-distribution" class="col-md-6">
+                                    <h6>数据分布统计</h6>
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <div class="chart-container" style="height: 300px;">
+                                                <canvas id="distributionChart"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 数据分析结论 -->
+                            <div class="mt-5">
+                                <h6 class="mb-4">数据分析结论</h6>
+                                <div class="card bg-light p-3">
+                                    <p class="mb-0">
+                                        基于2024年5月1日至20日的历史数据分析：<br>
+                                        1. 污染物浓度呈现下降趋势，平均下降3.5%，表明系统净化效率持续提升。<br>
+                                        2. 系统效率稳步提升，平均达到88.7%，比上月提高2.1%。<br>
+                                        3. 能耗持续优化，平均降低4.2%，节能效果显著。<br>
+                                        4. 数据完整率达到97.8%，数据质量可靠，可用于进一步优化控制策略。
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. 详细历史数据部分 -->
+                <section id="history-details" class="my-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fa fa-table me-2"></i>详细历史数据</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <div class="row g-3 align-items-center">
+                                    <div class="col-md-4">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="搜索时间或数值...">
+                                            <button class="btn btn-outline-secondary" type="button">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <select class="form-select">
+                                            <option value="">按数据质量排序</option>
+                                            <option value="high">高质量优先</option>
+                                            <option value="low">低质量优先</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 text-end">
+                                        <button class="btn btn-outline-primary">
+                                            <i class="fa fa-refresh me-1"></i>刷新数据
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                                <table class="table table-striped table-hover data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>时间</th>
+                                            <th>流量 (cm/s)</th>
+                                            <th>污染物浓度 (ppm)</th>
+                                            <th>光照强度 (lux)</th>
+                                            <th>pH值</th>
+                                            <th>温度 (°C)</th>
+                                            <th>能耗 (%)</th>
+                                            <th>系统效率 (%)</th>
+                                            <th>数据质量</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="historyTableBody">
+                                        <!-- 数据行将通过JavaScript动态生成 -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div class="text-muted">显示第 1 到 20 条记录，共 28,650 条</div>
+                                <nav>
+                                    <ul class="pagination pagination-sm mb-0">
+                                        <li class="page-item disabled"><a class="page-link" href="#"><i class="fa fa-chevron-left"></i></a></li>
+                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">4</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">5</a></li>
+                                        <li class="page-item"><a class="page-link" href="#"><i class="fa fa-chevron-right"></i></a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-light py-3 mt-5">
+        <div class="container-fluid text-center">
+            <p class="mb-0 text-muted">工业控制系统数据管理平台 © 2024 | 版本 v1.0.0</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery and Date Range Picker -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script>
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化日期范围选择器
+            $('#dateRange').daterangepicker({
+                startDate: moment().subtract(20, 'days'),
+                endDate: moment(),
+                locale: {
+                    format: 'YYYY-MM-DD',
+                    applyLabel: '确定',
+                    cancelLabel: '取消',
+                    customRangeLabel: '自定义',
+                    daysOfWeek: ['日', '一', '二', '三', '四', '五', '六'],
+                    monthNames: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月']
+                }
+            });
+
+            // 1. 历史数据图表
+            const historyCtx = document.getElementById('historyChart').getContext('2d');
+            const historyChart = new Chart(historyCtx, {
+                type: 'line',
+                data: {
+                    labels: ['05-01', '05-02', '05-03', '05-04', '05-05', '05-06', '05-07', '05-08', '05-09', '05-10', '05-11', '05-12', '05-13', '05-14', '05-15', '05-16', '05-17', '05-18', '05-19', '05-20'],
+                    datasets: [
+                        {
+                            label: '污染物浓度 (ppm)',
+                            data: [165.2, 162.8, 160.5, 158.9, 157.2, 156.8, 157.5, 156.8, 155.9, 155.2, 154.8, 154.2, 153.9, 153.5, 153.2, 152.8, 152.5, 152.3, 152.0, 151.8],
+                            borderColor: '#dc3545',
+                            backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                            tension: 0.3,
+                            fill: true,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: '系统效率 (%)',
+                            data: [85.2, 85.8, 86.3, 86.7, 87.1, 87.5, 87.8, 88.2, 88.5, 88.8, 89.0, 89.2, 89.4, 89.5, 89.6, 89.7, 89.8, 89.9, 90.0, 90.1],
+                            borderColor: '#198754',
+                            backgroundColor: 'rgba(25, 135, 84, 0.1)',
+                            tension: 0.3,
+                            fill: true,
+                            yAxisID: 'y1'
+                        },
+                        {
+                            label: '能耗 (%)',
+                            data: [72.5, 71.8, 71.2, 70.5, 69.9, 69.3, 68.8, 68.4, 67.9, 67.5, 67.1, 66.7, 66.3, 65.9, 65.6, 65.3, 65.0, 64.7, 64.5, 64.2],
+                            borderColor: '#6c757d',
+                            backgroundColor: 'rgba(108, 117, 125, 0.1)',
+                            tension: 0.3,
+                            fill: true,
+                            yAxisID: 'y'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        if (label.includes('效率') || label.includes('能耗')) {
+                                            label += context.parsed.y.toFixed(1) + '%';
+                                        } else if (label.includes('浓度')) {
+                                            label += context.parsed.y.toFixed(1) + ' ppm';
+                                        } else {
+                                            label += context.parsed.y;
+                                        }
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: '日期'
+                            }
+                        },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: '污染物浓度 (ppm) / 能耗 (%)'
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: '系统效率 (%)'
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 2. 对比分析图表
+            const comparisonCtx = document.getElementById('comparisonChart').getContext('2d');
+            new Chart(comparisonCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['流量', '污染物', '光照', 'pH值', '温度', '能耗'],
+                    datasets: [
+                        {
+                            label: '本期 (05-01至05-20)',
+                            data: [27.8, 158.4, 875.6, 7.15, 25.6, 65.3],
+                            backgroundColor: '#0d6efd'
+                        },
+                        {
+                            label: '上期 (04-10至04-30)',
+                            data: [27.5, 164.2, 862.3, 7.08, 24.9, 68.2],
+                            backgroundColor: '#6c757d'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false
+                        }
+                    }
+                }
+            });
+
+            // 3. 数据分布图表
+            const distributionCtx = document.getElementById('distributionChart').getContext('2d');
+            new Chart(distributionCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['正常数据', '校准数据', '补偿数据', '异常数据'],
+                    datasets: [{
+                        data: [85, 8, 5, 2],
+                        backgroundColor: [
+                            '#198754',
+                            '#0d6efd',
+                            '#ffc107',
+                            '#dc3545'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+
+            // 4. 填充历史数据表格
+            const historyData = [
+                { time: '2024-05-20 14:30', flow: 28.5, pollution: 156.8, light: 890.2, ph: 7.2, temp: 25.8, energy: 68.4, efficiency: 89.6, quality: 98 },
+                { time: '2024-05-20 14:00', flow: 28.3, pollution: 157.5, light: 885.7, ph: 7.18, temp: 25.7, energy: 68.8, efficiency: 89.2, quality: 97 },
+                { time: '2024-05-20 13:30', flow: 28.1, pollution: 158.2, light: 880.3, ph: 7.15, temp: 25.6, energy: 69.3, efficiency: 88.8, quality: 96 },
+                { time: '2024-05-20 13:00', flow: 27.9, pollution: 159.1, light: 875.6, ph: 7.12, temp: 25.5, energy: 69.9, efficiency: 88.3, quality: 95 },
+                { time: '2024-05-20 12:30', flow: 27.7, pollution: 160.3, light: 870.4, ph: 7.10, temp: 25.4, energy: 70.5, efficiency: 87.7, quality: 94 },
+                { time: '2024-05-20 12:00', flow: 27.5, pollution: 161.8, light: 865.2, ph: 7.08, temp: 25.3, energy: 71.2, efficiency: 87.1, quality: 93 },
+                { time: '2024-05-20 11:30', flow: 27.2, pollution: 163.5, light: 860.1, ph: 7.05, temp: 25.2, energy: 71.8, efficiency: 86.5, quality: 92 },
+                { time: '2024-05-20 11:00', flow: 26.8, pollution: 165.2, light: 855.3, ph: 7.02, temp: 25.1, energy: 72.5, efficiency: 85.8, quality: 91 },
+                { time: '2024-05-20 10:30', flow: 26.5, pollution: 162.8, light: 850.7, ph: 7.00, temp: 25.0, energy: 73.1, efficiency: 85.2, quality: 90 },
+                { time: '2024-05-20 10:00', flow: 26.1, pollution: 160.5, light: 845.9, ph: 6.98, temp: 24.9, energy: 73.8, efficiency: 84.6, quality: 89 },
+                { time: '2024-05-19 15:30', flow: 27.8, pollution: 158.2, light: 880.5, ph: 7.05, temp: 25.3, energy: 67.5, efficiency: 87.9, quality: 95 },
+                { time: '2024-05-19 14:00', flow: 27.6, pollution: 159.5, light: 875.2, ph: 7.02, temp: 25.2, energy: 68.1, efficiency: 87.3, quality: 94 },
+                { time: '2024-05-19 13:30', flow: 27.3, pollution: 161.2, light: 870.8, ph: 6.99, temp: 25.1, energy: 68.7, efficiency: 86.7, quality: 93 },
+                { time: '2024-05-19 13:00', flow: 27.0, pollution: 162.8, light: 865.4, ph: 6.96, temp: 25.0, energy: 69.3, efficiency: 86.1, quality: 92 },
+                { time: '2024-05-19 12:30', flow: 26.7, pollution: 164.5, light: 860.1, ph: 6.93, temp: 24.9, energy: 69.9, efficiency: 85.5, quality: 91 },
+                { time: '2024-05-19 12:00', flow: 26.4, pollution: 166.2, light: 855.3, ph: 6.90, temp: 24.8, energy: 70.5, efficiency: 84.9, quality: 90 },
+                { time: '2024-05-19 11:30', flow: 26.1, pollution: 168.0, light: 850.7, ph: 6.87, temp: 24.7, energy: 71.1, efficiency: 84.3, quality: 89 },
+                { time: '2024-05-19 11:00', flow: 25.8, pollution: 169.8, light: 845.9, ph: 6.84, temp: 24.6, energy: 71.7, efficiency: 83.7, quality: 88 },
+                { time: '2024-05-19 10:30', flow: 25.5, pollution: 171.5, light: 841.2, ph: 6.81, temp: 24.5, energy: 72.3, efficiency: 83.1, quality: 87 },
+                { time: '2024-05-19 10:00', flow: 25.2, pollution: 173.2, light: 836.5, ph: 6.78, temp: 24.4, energy: 72.9, efficiency: 82.5, quality: 86 }
+            ];
+
+            const tableBody = document.getElementById('historyTableBody');
+            
+            historyData.forEach(data => {
+                const row = document.createElement('tr');
+                row.className = 'data-point';
+                
+                // 根据数据质量设置颜色
+                let qualityColor = 'success';
+                if (data.quality < 90) qualityColor = 'warning';
+                if (data.quality < 80) qualityColor = 'danger';
+                
+                row.innerHTML = `
+                    <td>${data.time}</td>
+                    <td>${data.flow.toFixed(1)}</td>
+                    <td>${data.pollution.toFixed(1)}</td>
+                    <td>${data.light.toFixed(1)}</td>
+                    <td>${data.ph.toFixed(2)}</td>
+                    <td>${data.temp.toFixed(1)}</td>
+                    <td>${data.energy.toFixed(1)}</td>
+                    <td>${data.efficiency.toFixed(1)}</td>
+                    <td><span class="badge bg-${qualityColor}">${data.quality}%</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" title="查看详情">
+                            <i class="fa fa-eye"></i>
+                        </button>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+
+            // 5. 按钮事件处理
+            document.getElementById('queryBtn').addEventListener('click', function() {
+                const dateRange = document.getElementById('dateRange').value;
+                const dataType = document.getElementById('dataType').value;
+                const dataFrequency = document.getElementById('dataFrequency').value;
+                
+                // 模拟查询数据
+                console.log('查询条件：', { dateRange, dataType, dataFrequency });
+                
+                // 显示加载状态
+                this.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>查询中...';
+                this.disabled = true;
+                
+                // 模拟网络请求
+                setTimeout(() => {
+                    this.innerHTML = '<i class="fa fa-search me-1"></i>查询数据';
+                    this.disabled = false;
+                    
+                    // 显示成功消息
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-success alert-dismissible fade show mt-3';
+                    alertDiv.innerHTML = `
+                        成功查询到数据：时间范围 ${dateRange}，数据类型 ${document.getElementById('dataType').options[document.getElementById('dataType').selectedIndex].text}，数据频率 ${document.getElementById('dataFrequency').options[document.getElementById('dataFrequency').selectedIndex].text}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    `;
+                    
+                    // 插入到查询条件卡片后面
+                    document.querySelector('.card.bg-light').parentNode.appendChild(alertDiv);
+                    
+                    // 3秒后自动消失
+                    setTimeout(() => {
+                        if (alertDiv.parentNode) {
+                            alertDiv.classList.remove('show');
+                            setTimeout(() => {
+                                if (alertDiv.parentNode) {
+                                    alertDiv.parentNode.removeChild(alertDiv);
+                                }
+                            }, 150);
+                        }
+                    }, 3000);
+                }, 1500);
+            });
+
+            document.getElementById('exportBtn').addEventListener('click', function() {
+                const dateRange = document.getElementById('dateRange').value;
+                
+                // 模拟导出数据
+                console.log('导出数据：', dateRange);
+                
+                // 显示导出状态
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>导出中...';
+                this.disabled = true;
+                
+                // 模拟网络请求
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.disabled = false;
+                    
+                    // 显示成功消息
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-info alert-dismissible fade show mt-3';
+                    alertDiv.innerHTML = `
+                        数据导出成功！已生成包含历史数据的CSV文件。
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    `;
+                    
+                    // 插入到查询条件卡片后面
+                    document.querySelector('.card.bg-light').parentNode.appendChild(alertDiv);
+                    
+                    // 3秒后自动消失
+                    setTimeout(() => {
+                        if (alertDiv.parentNode) {
+                            alertDiv.classList.remove('show');
+                            setTimeout(() => {
+                                if (alertDiv.parentNode) {
+                                    alertDiv.parentNode.removeChild(alertDiv);
+                                }
+                            }, 150);
+                        }
+                    }, 3000);
+                }, 2000);
+            });
+
+            document.getElementById('resetBtn').addEventListener('click', function() {
+                // 重置表单
+                document.getElementById('dateRange').value = '2024-05-01 - 2024-05-20';
+                document.getElementById('dataType').value = 'all';
+                document.getElementById('dataFrequency').value = 'daily';
+                document.getElementById('showTrend').checked = true;
+                document.getElementById('showAvg').checked = true;
+                document.getElementById('showMinMax').checked = false;
+                
+                // 显示重置消息
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-secondary alert-dismissible fade show mt-3';
+                alertDiv.innerHTML = `
+                    查询条件已重置为默认值。
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                
+                // 插入到查询条件卡片后面
+                document.querySelector('.card.bg-light').parentNode.appendChild(alertDiv);
+                
+                // 3秒后自动消失
+                setTimeout(() => {
+                    if (alertDiv.parentNode) {
+                        alertDiv.classList.remove('show');
+                        setTimeout(() => {
+                            if (alertDiv.parentNode) {
+                                alertDiv.parentNode.removeChild(alertDiv);
+                            }
+                        }, 150);
+                    }
+                }, 3000);
+            });
+
+            // 6. 表格行点击事件
+            document.getElementById('historyTableBody').addEventListener('click', function(e) {
+                const row = e.target.closest('tr');
+                if (row && row.classList.contains('data-point')) {
+                    const cells = row.cells;
+                    const time = cells[0].textContent;
+                    
+                    // 高亮选中行
+                    document.querySelectorAll('#historyTableBody tr').forEach(r => {
+                        r.classList.remove('table-primary');
+                    });
+                    row.classList.add('table-primary');
+                    
+                    // 显示选中数据的详细信息
+                    console.log('选中数据时间：', time);
+                    
+                    // 可以在这里添加显示数据详细信息的逻辑
+                }
+            });
+            
+            // 7. 侧边栏导航点击事件
+            document.querySelectorAll('.sidebar .nav-link-sub').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // 移除所有子导航的激活状态
+                    document.querySelectorAll('.sidebar .nav-link-sub').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    
+                    // 为当前点击的链接添加激活状态
+                    this.classList.add('active');
+                });
+            });
+            
+            // 8. 滚动到对应部分时更新侧边栏激活状态
+            window.addEventListener('scroll', function() {
+                const sections = [
+                    {id: 'history-query-conditions', link: '.nav-link-sub[href="#history-query-conditions"]'},
+                    {id: 'history-query-statistics', link: '.nav-link-sub[href="#history-query-statistics"]'},
+                    {id: 'history-analysis-trend', link: '.nav-link-sub[href="#history-analysis-trend"]'},
+                    {id: 'history-analysis-comparison', link: '.nav-link-sub[href="#history-analysis-comparison"]'},
+                    {id: 'history-analysis-distribution', link: '.nav-link-sub[href="#history-analysis-distribution"]'}
+                ];
+                
+                let currentSection = '';
+                
+                sections.forEach(section => {
+                    const element = document.getElementById(section.id);
+                    if (element) {
+                        const rect = element.getBoundingClientRect();
+                        if (rect.top <= 150 && rect.bottom >= 150) {
+                            currentSection = section.id;
+                        }
+                    }
+                });
+                
+                // 更新侧边栏激活状态
+                if (currentSection) {
+                    document.querySelectorAll('.sidebar .nav-link-sub').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    
+                    const activeLink = document.querySelector(`.nav-link-sub[href="#${currentSection}"]`);
+                    if (activeLink) {
+                        activeLink.classList.add('active');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

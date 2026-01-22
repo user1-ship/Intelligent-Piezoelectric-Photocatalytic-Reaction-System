@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 智能压电光催化控制平台</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 图标 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <style>
+        /* 自定义样式 - 与已有页面保持一致 */
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar-brand {
+            font-weight: 600;
+        }
+        .login-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+        .login-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 420px;
+            transition: transform 0.3s ease;
+        }
+        .login-card:hover {
+            transform: translateY(-5px);
+        }
+        .login-header {
+            background-color: #0d6efd;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        .login-header h2 {
+            margin-bottom: 0.5rem;
+        }
+        .login-header p {
+            opacity: 0.9;
+            margin-bottom: 0;
+        }
+        .login-body {
+            padding: 2rem;
+        }
+        .form-control {
+            padding: 0.75rem 1rem;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+        .input-group-text {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-right: none;
+            border-radius: 8px 0 0 8px;
+        }
+        .input-group .form-control {
+            border-left: none;
+            border-radius: 0 8px 8px 0;
+        }
+        .btn-login {
+            background-color: #0d6efd;
+            color: white;
+            padding: 0.75rem;
+            font-weight: 600;
+            border-radius: 8px;
+            border: none;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        .btn-login:hover {
+            background-color: #0b5ed7;
+            transform: translateY(-2px);
+        }
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .form-check-input:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        .forgot-password {
+            color: #0d6efd;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+        .system-status {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+        }
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        .status-item:last-child {
+            margin-bottom: 0;
+        }
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .status-online {
+            background-color: #198754;
+        }
+        .status-offline {
+            background-color: #dc3545;
+        }
+        .status-connecting {
+            background-color: #ffc107;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .footer {
+            background-color: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+            padding: 1rem 0;
+            text-align: center;
+        }
+        .login-logo {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        .language-switcher {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
+        .language-switcher .btn {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.875rem;
+        }
+        .login-error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c2c7;
+            color: #842029;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        .login-success {
+            background-color: #d1e7dd;
+            border: 1px solid #badbcc;
+            color: #0f5132;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        .version-info {
+            font-size: 0.8rem;
+            color: #6c757d;
+            text-align: center;
+            margin-top: 1rem;
+        }
+    </style>
+    <script>
+    // 重定向函数
+    function redirectToFrontPage() {
+        window.location.href = 'front.html';
+    }
+
+    // 检查是否已登录
+    function checkLoggedIn() {
+        const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+        if (token) {
+            // 已登录，直接跳转
+            setTimeout(redirectToFrontPage, 1000);
+            document.getElementById('loginSuccess').style.display = 'block';
+            document.getElementById('successMessage').textContent = '检测到已登录，正在跳转...';
+        }
+    }
+
+    // 页面加载时检查
+    document.addEventListener('DOMContentLoaded', function() {
+        checkLoggedIn();
+        
+        // 修改登录表单提交
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>登录中...';
+            submitBtn.disabled = true;
+            
+            try {
+                // 调用后端API
+                const response = await fetch('http://localhost:8000/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password,
+                        remember_me: rememberMe
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // 登录成功
+                    if (rememberMe) {
+                        localStorage.setItem('access_token', data.access_token);
+                    } else {
+                        sessionStorage.setItem('access_token', data.access_token);
+                    }
+                    
+                    // 保存用户信息
+                    localStorage.setItem('user_info', JSON.stringify(data.user_info));
+                    
+                    document.getElementById('loginSuccess').style.display = 'block';
+                    document.getElementById('successMessage').textContent = '登录成功，正在跳转...';
+                    
+                    // 2秒后跳转
+                    setTimeout(redirectToFrontPage, 2000);
+                } else {
+                    // 登录失败
+                    document.getElementById('loginError').style.display = 'block';
+                    document.getElementById('errorMessage').textContent = data.detail || '登录失败';
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            } catch (error) {
+                document.getElementById('loginError').style.display = 'block';
+                document.getElementById('errorMessage').textContent = '网络错误，请检查后端是否运行';
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    });
+    </script>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fa fa-industry me-2"></i>智能压电光催化装置控制平台
+            </a>
+            
+            <!-- 语言切换器 -->
+            <div class="language-switcher">
+                <select class="form-select form-select-sm" style="width: auto;">
+                    <option value="zh-CN" selected>简体中文</option>
+                    <option value="en-US">English</option>
+                </select>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主登录区域 -->
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-logo">
+                    <i class="fa fa-industry"></i>
+                </div>
+                <h2>系统登录</h2>
+                <p>智能压电光催化装置控制平台</p>
+            </div>
+            
+            <div class="login-body">
+                <!-- 错误提示 -->
+                <div class="login-error" id="loginError">
+                    <i class="fa fa-exclamation-triangle me-2"></i>
+                    <span id="errorMessage">用户名或密码错误</span>
+                </div>
+                
+                <!-- 成功提示 -->
+                <div class="login-success" id="loginSuccess">
+                    <i class="fa fa-check-circle me-2"></i>
+                    <span id="successMessage">登录成功，正在跳转...</span>
+                </div>
+                
+                <!-- 登录表单 -->
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">用户名</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fa fa-user"></i>
+                            </span>
+                            <input type="text" class="form-control" id="username" placeholder="请输入用户名" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">密码</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fa fa-lock"></i>
+                            </span>
+                            <input type="password" class="form-control" id="password" placeholder="请输入密码" required>
+                            <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                <i class="fa fa-eye" id="togglePasswordIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="remember-forgot">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">
+                                记住登录状态
+                            </label>
+                        </div>
+                        <a href="#" class="forgot-password" id="forgotPasswordLink">
+                            忘记密码？
+                        </a>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-login" id="loginButton">
+                        <i class="fa fa-sign-in me-2"></i>登录系统
+                    </button>
+                    
+                    <!-- 系统状态 -->
+                    <div class="system-status">
+                        <h6 class="mb-3">系统状态</h6>
+                        <div class="status-item">
+                            <span>数据服务器</span>
+                            <span>
+                                <span class="status-indicator status-online"></span>
+                                在线
+                            </span>
+                        </div>
+                        <div class="status-item">
+                            <span>控制服务器</span>
+                            <span>
+                                <span class="status-indicator status-online"></span>
+                                在线
+                            </span>
+                        </div>
+                        <div class="status-item">
+                            <span>传感器网络</span>
+                            <span>
+                                <span class="status-indicator status-connecting"></span>
+                                连接中
+                            </span>
+                        </div>
+                    </div>
+                </form>
+                
+                <div class="version-info">
+                    <p>版本号: v1.0.0 | 最后更新: 2024-05-20</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container-fluid">
+            <p class="mb-0 text-muted">工业控制系统数据管理平台 © 2024 | 智能压电光催化控制平台</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. 密码显示/隐藏切换
+            const togglePasswordBtn = document.getElementById('togglePassword');
+            const togglePasswordIcon = document.getElementById('togglePasswordIcon');
+            const passwordInput = document.getElementById('password');
+            
+            togglePasswordBtn.addEventListener('click', function() {
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    togglePasswordIcon.classList.remove('fa-eye');
+                    togglePasswordIcon.classList.add('fa-eye-slash');
+                } else {
+                    passwordInput.type = 'password';
+                    togglePasswordIcon.classList.remove('fa-eye-slash');
+                    togglePasswordIcon.classList.add('fa-eye');
+                }
+            });
+            
+            // 2. 登录表单提交处理
+            const loginForm = document.getElementById('loginForm');
+            const loginButton = document.getElementById('loginButton');
+            const loginError = document.getElementById('loginError');
+            const loginSuccess = document.getElementById('loginSuccess');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // 预定义的用户名和密码（在实际应用中应从后端验证）
+            const validCredentials = {
+                'admin': 'admin123', // 管理员
+                'operator': 'operator123', // 操作员
+                'viewer': 'viewer123' // 查看者
+            };
+            
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value.trim();
+                const rememberMe = document.getElementById('rememberMe').checked;
+                
+                // 隐藏之前的提示
+                loginError.style.display = 'none';
+                loginSuccess.style.display = 'none';
+                
+                // 验证用户名和密码
+                if (!username || !password) {
+                    errorMessage.textContent = '用户名和密码不能为空';
+                    loginError.style.display = 'block';
+                    return;
+                }
+                
+                // 检查是否在有效凭证中
+                if (validCredentials[username] && validCredentials[username] === password) {
+                    // 登录成功
+                    loginSuccess.style.display = 'block';
+                    
+                    // 保存登录状态到本地存储（如果用户选择了记住我）
+                    if (rememberMe) {
+                        localStorage.setItem('isLoggedIn', 'true');
+                        localStorage.setItem('username', username);
+                        localStorage.setItem('userRole', getRoleByUsername(username));
+                    } else {
+                        sessionStorage.setItem('isLoggedIn', 'true');
+                        sessionStorage.setItem('username', username);
+                        sessionStorage.setItem('userRole', getRoleByUsername(username));
+                    }
+                    
+                    // 更新登录按钮状态
+                    loginButton.innerHTML = '<i class="fa fa-spinner fa-spin me-2"></i>登录中...';
+                    loginButton.disabled = true;
+                    
+                    // 模拟登录过程，2秒后跳转
+                    setTimeout(function() {
+                        // 根据用户角色跳转到不同页面（默认为数据中心）
+                        const userRole = getRoleByUsername(username);
+                        let redirectPage = 'front.html';
+                        
+                        // 管理员可以访问所有页面，操作员和查看者有限制
+                        window.location.href = redirectPage;
+                    }, 2000);
+                    
+                } else {
+                    // 登录失败
+                    errorMessage.textContent = '用户名或密码错误';
+                    loginError.style.display = 'block';
+                    
+                    // 添加错误动画效果
+                    loginError.style.animation = 'none';
+                    setTimeout(() => {
+                        loginError.style.animation = 'pulse 0.5s';
+                    }, 10);
+                    
+                    // 清空密码框
+                    document.getElementById('password').value = '';
+                    
+                    // 聚焦到密码输入框
+                    document.getElementById('password').focus();
+                }
+            });
+            
+            // 根据用户名获取角色
+            function getRoleByUsername(username) {
+                if (username === 'admin') return '管理员';
+                if (username === 'operator') return '操作员';
+                if (username === 'viewer') return '查看者';
+                return '未知角色';
+            }
+            
+            // 3. 忘记密码链接
+            document.getElementById('forgotPasswordLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // 显示提示信息
+                const originalText = this.textContent;
+                this.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>发送中...';
+                this.style.pointerEvents = 'none';
+                
+                // 模拟发送重置密码邮件
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.style.pointerEvents = 'auto';
+                    
+                    // 显示成功消息
+                    loginSuccess.innerHTML = `
+                        <i class="fa fa-check-circle me-2"></i>
+                        密码重置链接已发送到管理员邮箱，请联系管理员获取新密码。
+                    `;
+                    loginSuccess.style.display = 'block';
+                    
+                    // 3秒后自动隐藏
+                    setTimeout(() => {
+                        loginSuccess.style.display = 'none';
+                    }, 3000);
+                }, 1500);
+            });
+            
+            // 4. 自动填充记住的用户名
+            const rememberedUsername = localStorage.getItem('username');
+            if (rememberedUsername) {
+                document.getElementById('username').value = rememberedUsername;
+                document.getElementById('rememberMe').checked = true;
+                document.getElementById('password').focus();
+            } else {
+                document.getElementById('username').focus();
+            }
+            
+            // 5. 检查是否已登录，如果已登录则直接跳转
+            const isLoggedIn = localStorage.getItem('isLoggedIn') || sessionStorage.getItem('isLoggedIn');
+            if (isLoggedIn === 'true') {
+                // 显示正在跳转的提示
+                loginSuccess.innerHTML = '<i class="fa fa-spinner fa-spin me-2"></i>检测到已登录，正在跳转...';
+                loginSuccess.style.display = 'block';
+                
+                // 延迟跳转
+                setTimeout(() => {
+                    window.location.href = 'front.html';
+                }, 1000);
+            }
+            
+            // 6. 模拟传感器网络连接状态更新
+            setTimeout(() => {
+                const sensorStatus = document.querySelector('.status-item:nth-child(3) span:last-child');
+                sensorStatus.innerHTML = `
+                    <span class="status-indicator status-online"></span>
+                    在线
+                `;
+            }, 3000);
+            
+            // 7. 回车键提交表单
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && (document.activeElement.id === 'username' || document.activeElement.id === 'password')) {
+                    // 确保不是切换密码按钮的Enter
+                    if (document.activeElement.id !== 'togglePassword') {
+                        loginForm.dispatchEvent(new Event('submit'));
+                    }
+                }
+            });
+            
+            // 8. 语言切换功能
+            const languageSelect = document.querySelector('.language-switcher select');
+            languageSelect.addEventListener('change', function() {
+                const selectedLanguage = this.value;
+                
+                // 根据选择的语言更新页面文本
+                if (selectedLanguage === 'en-US') {
+                    // 更新为英文
+                    updateTextToEnglish();
+                } else {
+                    // 更新为中文
+                    updateTextToChinese();
+                }
+                
+                // 显示语言切换提示
+                loginSuccess.innerHTML = `
+                    <i class="fa fa-check-circle me-2"></i>
+                    语言已切换为 ${this.options[this.selectedIndex].text}
+                `;
+                loginSuccess.style.display = 'block';
+                
+                setTimeout(() => {
+                    loginSuccess.style.display = 'none';
+                }, 2000);
+            });
+            
+            // 更新文本为英文
+            function updateTextToEnglish() {
+                document.querySelector('.login-header h2').textContent = 'System Login';
+                document.querySelector('.login-header p').textContent = 'Intelligent Piezo-Photocatalytic Device Control Platform';
+                document.querySelector('label[for="username"]').textContent = 'Username';
+                document.getElementById('username').placeholder = 'Enter username';
+                document.querySelector('label[for="password"]').textContent = 'Password';
+                document.getElementById('password').placeholder = 'Enter password';
+                document.querySelector('label[for="rememberMe"]').textContent = 'Remember me';
+                document.getElementById('forgotPasswordLink').textContent = 'Forgot password?';
+                document.getElementById('loginButton').innerHTML = '<i class="fa fa-sign-in me-2"></i>Login';
+                document.querySelector('.system-status h6').textContent = 'System Status';
+                document.querySelectorAll('.status-item')[0].querySelector('span:first-child').textContent = 'Data Server';
+                document.querySelectorAll('.status-item')[1].querySelector('span:first-child').textContent = 'Control Server';
+                document.querySelectorAll('.status-item')[2].querySelector('span:first-child').textContent = 'Sensor Network';
+                document.querySelectorAll('.status-item')[0].querySelector('span:last-child').innerHTML = '<span class="status-indicator status-online"></span>Online';
+                document.querySelectorAll('.status-item')[1].querySelector('span:last-child').innerHTML = '<span class="status-indicator status-online"></span>Online';
+                document.querySelectorAll('.status-item')[2].querySelector('span:last-child').innerHTML = '<span class="status-indicator status-connecting"></span>Connecting';
+            }
+            
+            // 更新文本为中文
+            function updateTextToChinese() {
+                document.querySelector('.login-header h2').textContent = '系统登录';
+                document.querySelector('.login-header p').textContent = '智能压电光催化装置控制平台';
+                document.querySelector('label[for="username"]').textContent = '用户名';
+                document.getElementById('username').placeholder = '请输入用户名';
+                document.querySelector('label[for="password"]').textContent = '密码';
+                document.getElementById('password').placeholder = '请输入密码';
+                document.querySelector('label[for="rememberMe"]').textContent = '记住登录状态';
+                document.getElementById('forgotPasswordLink').textContent = '忘记密码？';
+                document.getElementById('loginButton').innerHTML = '<i class="fa fa-sign-in me-2"></i>登录系统';
+                document.querySelector('.system-status h6').textContent = '系统状态';
+                document.querySelectorAll('.status-item')[0].querySelector('span:first-child').textContent = '数据服务器';
+                document.querySelectorAll('.status-item')[1].querySelector('span:first-child').textContent = '控制服务器';
+                document.querySelectorAll('.status-item')[2].querySelector('span:first-child').textContent = '传感器网络';
+                document.querySelectorAll('.status-item')[0].querySelector('span:last-child').innerHTML = '<span class="status-indicator status-online"></span>在线';
+                document.querySelectorAll('.status-item')[1].querySelector('span:last-child').innerHTML = '<span class="status-indicator status-online"></span>在线';
+                document.querySelectorAll('.status-item')[2].querySelector('span:last-child').innerHTML = '<span class="status-indicator status-connecting"></span>连接中';
+            }
+        });
+    </script>
+</body>
+</html>

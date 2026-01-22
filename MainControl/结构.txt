@@ -1,0 +1,44 @@
+AdvancedPiezoPhotoCatalyticSystem/
+├── MainControl/
+│   ├── MainControl.ino (之前提供的完整代码)
+│   └── src/
+│       ├── Core/
+│       │   ├── SystemConfig.h
+│       │   ├── SystemState.h
+│       │   ├── SystemState.cpp
+│       │   └── CommonTypes.h
+│       ├── Sensors/
+│       │   ├── SensorFusion.h
+│       │   ├── SensorFusion.cpp 
+│       │   ├── SensorManager.h
+│       │   └── SensorManager.cpp 
+│       ├── Control/
+│       │   ├── ControlSystem.h
+│       │   ├── ControlSystem.cpp 
+│       │   ├── PIDController.h
+│       │   ├── PIDController.cpp 
+│       │   ├── FuzzyLogic.h
+│       │   └── FuzzyLogic.cpp 
+│       ├── Model/
+│       │   ├── DigitalTwin.h
+│       │   ├── DigitalTwin.cpp 
+│       │   ├── SystemModel.h
+│       │   └── SystemModel.cpp 
+│       ├── Learning/
+│       │   ├── LearningSystem.h
+│       │   ├── LearningSystem.cpp 
+│       │   ├── DataStorage.h
+│       │   └── DataStorage.cpp 
+│       ├── Communication/
+│       │   ├── SerialMonitor.h
+│       │   ├── SerialMonitor.cpp 
+│       │   ├── WiFiComm.h      
+│       │   └── WiFiComm.cpp       
+│       └── Utilities/
+│           ├── Timer.h
+│           ├── Timer.cpp 
+│           ├── CircularBuffer.h
+│           ├── CircularBuffer.cpp 
+│           ├── MathUtils.h
+│           └── MathUtils.cpp 
+└── README.md
