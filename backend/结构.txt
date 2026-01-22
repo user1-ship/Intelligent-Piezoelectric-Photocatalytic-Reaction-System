@@ -1,0 +1,17 @@
+backend/
+├── main.py              # FastAPI主应用
+├── requirements.txt     # 依赖包
+├── config.py           # 配置文件
+├── database.py         # 数据库连接
+├── models.py           # 数据模型
+├── crud.py             # 数据库操作
+├── schemas.py          # Pydantic模型
+├── auth.py             # 认证模块
+├── routers/            # 路由模块
+│   ├── __init__.py
+│   ├── auth.py
+│   ├── sensors.py
+│   ├── control.py
+│   ├── history.py
+│   └── config.py
+└── utils.py           # 工具函数
