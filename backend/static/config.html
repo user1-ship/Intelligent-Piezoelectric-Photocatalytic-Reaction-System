@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统配置 - 智能压电光催化控制平台</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 图标 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <style>
+        /* 自定义样式 - 与已有页面保持一致 */
+        .sidebar {
+            min-height: calc(100vh - 56px);
+            background-color: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+        }
+        .card-header {
+            background-color: #0d6efd;
+            color: white;
+        }
+        .config-card {
+            transition: transform 0.2s;
+        }
+        .config-card:hover {
+            transform: translateY(-5px);
+        }
+        .fault-indicator {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .fault-active {
+            background-color: #dc3545;
+        }
+        .fault-inactive {
+            background-color: #198754;
+        }
+        .setting-item {
+            border-bottom: 1px solid #dee2e6;
+            padding: 1rem 0;
+        }
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+        .config-value {
+            font-weight: 600;
+            color: #0d6efd;
+        }
+        .nav-link-sub {
+            padding-left: 2.5rem !important;
+            font-size: 0.9rem;
+        }
+        .nav-link-sub.active {
+            background-color: #e7f1ff;
+            color: #0d6efd;
+            border-left: 3px solid #0d6efd;
+        }
+        .param-slider {
+            width: 100%;
+        }
+        .param-value-display {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #0d6efd;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="front.html">
+                <i class="fa fa-industry me-2"></i>智能压电光催化装置控制平台
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="front.html"><i class="fa fa-dashboard me-1"></i>数据中心</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="history.html"><i class="fa fa-history me-1"></i>历史数据</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="config.html"><i class="fa fa-cog me-1"></i>系统配置</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="help.html"><i class="fa fa-question-circle me-1"></i>帮助</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <div class="container-fluid" style="margin-top: 56px;">
+        <div class="row">
+            <!-- 侧边栏 -->
+            <div class="col-md-2 d-none d-md-block sidebar p-3">
+                <ul class="nav flex-column">
+                    <!-- 系统基本设置 -->
+                    <li class="nav-item mb-1">
+                        <a class="nav-link active bg-primary text-white" href="#system-basic">
+                            <i class="fa fa-sliders me-2"></i>系统基本设置
+                        </a>
+                    </li>
+                    
+                    <!-- 传感器配置 -->
+                    <li class="nav-item mb-1">
+                        <a class="nav-link text-dark" href="#sensor-config">
+                            <i class="fa fa-microchip me-2"></i>传感器配置
+                        </a>
+                    </li>
+                    
+                    <!-- 控制参数设置 -->
+                    <li class="nav-item mb-1">
+                        <a class="nav-link text-dark" href="#control-config">
+                            <i class="fa fa-tachometer me-2"></i>控制参数设置
+                        </a>
+                    </li>
+                    
+                    <!-- 算法参数设置 -->
+                    <li class="nav-item mb-1">
+                        <a class="nav-link text-dark" href="#algorithm-config">
+                            <i class="fa fa-code me-2"></i>算法参数设置
+                        </a>
+                    </li>
+                    
+                    <!-- 通信设置 -->
+                    <li class="nav-item mb-1">
+                        <a class="nav-link text-dark" href="#communication-config">
+                            <i class="fa fa-wifi me-2"></i>通信设置
+                        </a>
+                    </li>
+                    
+                    <!-- 安全设置 -->
+                    <li class="nav-item mb-1">
+                        <a class="nav-link text-dark" href="#security-config">
+                            <i class="fa fa-shield me-2"></i>安全设置
+                        </a>
+                    </li>
+                    
+                    <!-- 备份与恢复 -->
+                    <li class="nav-item mb-1">
+                        <a class="nav-link text-dark" href="#backup-config">
+                            <i class="fa fa-database me-2"></i>备份与恢复
+                        </a>
+                    </li>
+                    
+                    <!-- 分隔线 -->
+                    <li class="nav-item my-3">
+                        <hr class="my-1">
+                    </li>
+                    
+                    <!-- 返回数据中心链接 -->
+                    <li class="nav-item mb-2">
+                        <a class="nav-link text-dark" href="front.html">
+                            <i class="fa fa-arrow-left me-2"></i>返回数据中心
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 主内容面板 -->
+            <main class="col-md-10 ms-sm-auto px-4">
+                <!-- 1. 系统基本设置 -->
+                <section id="system-basic" class="my-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fa fa-sliders me-2"></i>系统基本设置</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="card config-card h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-title">系统信息</h6>
+                                            <div class="setting-item">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span>系统名称</span>
+                                                    <input type="text" class="form-control form-control-sm w-50" value="智能压电光催化控制平台">
+                                                </div>
+                                            </div>
+                                            <div class="setting-item">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span>系统版本</span>
+                                                    <span class="config-value">v1.0.0</span>
+                                                </div>
+                                            </div>
+                                            <div class="setting-item">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span>启动时间</span>
+                                                    <span class="config-value">2024-05-20 08:00:00</span>
+                                                </div>
+                                            </div>
+                                            <div class="setting-item">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span>运行时长</span>
+                                                    <span class="config-value">356小时28分钟</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card config-card h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-title">时间设置</h6>
+                                            <div class="setting-item">
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <span>当前时间</span>
+                                                    <span class="config-value">2024-05-20 14:45:32</span>
+                                                </div>
+                                                <div class="d-flex">
+                                                    <input type="datetime-local" class="form-control form-control-sm me-2" value="2024-05-20T14:45">
+                                                    <button class="btn btn-sm btn-primary">同步</button>
+                                                </div>
+                                            </div>
+                                            <div class="setting-item">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span>时区设置</span>
+                                                    <select class="form-select form-select-sm w-50">
+                                                        <option selected>(UTC+08:00) 北京，上海</option>
+                                                        <option>(UTC+00:00) 伦敦</option>
+                                                        <option>(UTC-05:00) 纽约</option>
+                                                        <option>(UTC+09:00) 东京</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="setting-item">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span>NTP服务器</span>
+                                                    <input type="text" class="form-control form-control-sm w-50" value="time.windows.com">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 数据存储设置 -->
+                            <div class="mt-4">
+                                <h6>数据存储设置</h6>
+                                <div class="card bg-light p-3">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="setting-item">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span>数据存储路径</span>
+                                                    <span class="config-value">/data/sensor</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="setting-item">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span>存储空间</span>
+                                                    <span class="config-value">65.8GB / 128GB</span>
+                                                </div>
+                                                <div class="progress mt-1" style="height: 8px;">
+                                                    <div class="progress-bar bg-success" role="progressbar" style="width: 51.4%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="setting-item">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span>数据保留时间</span>
+                                                    <select class="form-select form-select-sm w-50">
+                                                        <option>30天</option>
+                                                        <option selected>90天</option>
+                                                        <option>180天</option>
+                                                        <option>365天</option>
+                                                        <option>永久</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. 传感器配置 -->
+                <section id="sensor-config" class="my-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fa fa-microchip me-2"></i>传感器配置</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>传感器名称</th>
+                                            <th>类型</th>
+                                            <th>设备地址</th>
+                                            <th>采样频率</th>
+                                            <th>量程范围</th>
+                                            <th>校准状态</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>流量传感器-01</td>
+                                            <td>流量传感器</td>
+                                            <td>0x01</td>
+                                            <td>
+                                                <select class="form-select form-select-sm">
+                                                    <option>1Hz</option>
+                                                    <option selected>5Hz</option>
+                                                    <option>10Hz</option>
+                                                    <option>50Hz</option>
+                                                </select>
+                                            </td>
+                                            <td>0-100 cm/s</td>
+                                            <td><span class="badge bg-success">已校准</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1">校准</button>
+                                                <button class="btn btn-sm btn-outline-info">测试</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>污染物传感器-01</td>
+                                            <td>浓度传感器</td>
+                                            <td>0x02</td>
+                                            <td>
+                                                <select class="form-select form-select-sm">
+                                                    <option>1Hz</option>
+                                                    <option selected>2Hz</option>
+                                                    <option>5Hz</option>
+                                                </select>
+                                            </td>
+                                            <td>0-1000 ppm</td>
+                                            <td><span class="badge bg-warning">需校准</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-warning me-1">校准</button>
+                                                <button class="btn btn-sm btn-outline-info">测试</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>光照传感器-01</td>
+                                            <td>光强传感器</td>
+                                            <td>0x03</td>
+                                            <td>
+                                                <select class="form-select form-select-sm">
+                                                    <option selected>1Hz</option>
+                                                    <option>2Hz</option>
+                                                    <option>5Hz</option>
+                                                </select>
+                                            </td>
+                                            <td>0-2000 lux</td>
+                                            <td><span class="badge bg-success">已校准</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1">校准</button>
+                                                <button class="btn btn-sm btn-outline-info">测试</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>pH传感器-01</td>
+                                            <td>pH传感器</td>
+                                            <td>0x04</td>
+                                            <td>
+                                                <select class="form-select form-select-sm">
+                                                    <option selected>0.5Hz</option>
+                                                    <option>1Hz</option>
+                                                    <option>2Hz</option>
+                                                </select>
+                                            </td>
+                                            <td>0-14 pH</td>
+                                            <td><span class="badge bg-success">已校准</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1">校准</button>
+                                                <button class="btn btn-sm btn-outline-info">测试</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>温度传感器-01</td>
+                                            <td>温度传感器</td>
+                                            <td>0x05</td>
+                                            <td>
+                                                <select class="form-select form-select-sm">
+                                                    <option selected>1Hz</option>
+                                                    <option>2Hz</option>
+                                                    <option>5Hz</option>
+                                                </select>
+                                            </td>
+                                            <td>-20~100 °C</td>
+                                            <td><span class="badge bg-danger">异常</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-danger me-1">修复</button>
+                                                <button class="btn btn-sm btn-outline-info">测试</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- 传感器校准参数 -->
+                            <div class="mt-4">
+                                <h6>传感器校准参数</h6>
+                                <div class="card bg-light p-3">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">选择传感器</label>
+                                                <select class="form-select" id="sensorSelect">
+                                                    <option value="0">流量传感器-01</option>
+                                                    <option value="1">污染物传感器-01</option>
+                                                    <option value="2">光照传感器-01</option>
+                                                    <option value="3">pH传感器-01</option>
+                                                    <option value="4">温度传感器-01</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">校准偏移量</label>
+                                                <input type="number" class="form-control" step="0.01" value="0.00">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="d-flex justify-content-end">
+                                                <button class="btn btn-primary me-2">保存校准参数</button>
+                                                <button class="btn btn-outline-secondary">恢复默认值</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. 控制参数设置 -->
+                <section id="control-config" class="my-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fa fa-tachometer me-2"></i>控制参数设置</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <!-- PID控制参数 -->
+                                <div class="col-md-6 mb-4">
+                                    <h6>PID控制参数</h6>
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <div class="setting-item">
+                                                <label class="form-label">反应速度调节 (Kp)</label>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="range" class="form-range param-slider" min="0" max="10" step="0.01" value="2.85" id="kpSlider">
+                                                    <span class="param-value-display ms-3" id="kpValue">2.85</span>
+                                                </div>
+                                            </div>
+                                            <div class="setting-item">
+                                                <label class="form-label">残留误差消除 (Ki)</label>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="range" class="form-range param-slider" min="0" max="5" step="0.01" value="0.42" id="kiSlider">
+                                                    <span class="param-value-display ms-3" id="kiValue">0.42</span>
+                                                </div>
+                                            </div>
+                                            <div class="setting-item">
+                                                <label class="form-label">波动预判调节 (Kd)</label>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="range" class="form-range param-slider" min="0" max="2" step="0.01" value="0.18" id="kdSlider">
+                                                    <span class="param-value-display ms-3" id="kdValue">0.18</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- MPC控制参数 -->
+                                <div class="col-md-6">
+                                    <h6>MPC控制参数</h6>
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <div class="setting-item">
+                                                <label class="form-label">预测范围</label>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="range" class="form-range param-slider" min="1" max="20" step="0.1" value="10.0" id="predictionSlider">
+                                                    <span class="param-value-display ms-3" id="predictionValue">10.0</span>
+                                                </div>
+                                            </div>
+                                            <div class="setting-item">
+                                                <label class="form-label">控制范围</label>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="range" class="form-range param-slider" min="1" max="10" step="0.1" value="5.0" id="controlSlider">
+                                                    <span class="param-value-display ms-3" id="controlValue">5.0</span>
+                                                </div>
+                                            </div>
+                                            <div class="setting-item">
+                                                <label class="form-label">控制权重</label>
+                                                <div class="row">
+                                                    <div class="col-4">
+                                                        <label class="form-label small">核心目标</label>
+                                                        <input type="number" class="form-control form-control-sm" step="0.01" value="0.8">
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <label class="form-label small">次要目标</label>
+                                                        <input type="number" class="form-control form-control-sm" step="0.01" value="0.15">
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <label class="form-label small">辅助目标</label>
+                                                        <input type="number" class="form-control form-control-sm" step="0.01" value="0.05">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 控制模式设置 -->
+                            <div class="mt-4">
+                                <h6>控制模式设置</h6>
+                                <div class="card bg-light p-3">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="controlMode" id="modeAuto" checked>
+                                                <label class="form-check-label" for="modeAuto">
+                                                    <strong>自动模式</strong><br>
+                                                    <small class="text-muted">系统根据传感器数据自动调整控制参数</small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="controlMode" id="modeManual">
+                                                <label class="form-check-label" for="modeManual">
+                                                    <strong>手动模式</strong><br>
+                                                    <small class="text-muted">人工设置控制参数，系统按固定参数运行</small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="controlMode" id="modeLearning">
+                                                <label class="form-check-label" for="modeLearning">
+                                                    <strong>学习模式</strong><br>
+                                                    <small class="text-muted">强化学习算法持续优化控制策略</small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. 算法参数设置 -->
+                <section id="algorithm-config" class="my-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fa fa-code me-2"></i>算法参数设置</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <!-- 卡尔曼滤波参数 -->
+                                <div class="col-md-6 mb-4">
+                                    <h6>卡尔曼滤波参数</h6>
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-sm">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>传感器</th>
+                                                            <th>过程误差 (Q)</th>
+                                                            <th>测量误差 (R)</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>流量传感器</td>
+                                                            <td><input type="number" class="form-control form-control-sm" step="0.001" value="0.01"></td>
+                                                            <td><input type="number" class="form-control form-control-sm" step="0.001" value="0.1"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>污染物传感器</td>
+                                                            <td><input type="number" class="form-control form-control-sm" step="0.001" value="0.02"></td>
+                                                            <td><input type="number" class="form-control form-control-sm" step="0.001" value="0.15"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>光照传感器</td>
+                                                            <td><input type="number" class="form-control form-control-sm" step="0.001" value="0.01"></td>
+                                                            <td><input type="number" class="form-control form-control-sm" step="0.001" value="0.08"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>pH传感器</td>
+                                                            <td><input type="number" class="form-control form-control-sm" step="0.001" value="0.01"></td>
+                                                            <td><input type="number" class="form-control form-control-sm" step="0.001" value="0.09"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>温度传感器</td>
+                                                            <td><input type="number" class="form-control form-control-sm" step="0.001" value="0.01"></td>
+                                                            <td><input type="number" class="form-control form-control-sm" step="0.001" value="0.05"></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 强化学习参数 -->
+                                <div class="col-md-6">
+                                    <h6>强化学习参数</h6>
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <div class="setting-item">
+                                                <label class="form-label">学习率</label>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="range" class="form-range param-slider" min="0.001" max="0.1" step="0.001" value="0.01" id="learningRateSlider">
+                                                    <span class="param-value-display ms-3" id="learningRateValue">0.010</span>
+                                                </div>
+                                            </div>
+                                            <div class="setting-item">
+                                                <label class="form-label">折扣因子</label>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="range" class="form-range param-slider" min="0.5" max="1.0" step="0.01" value="0.95" id="discountSlider">
+                                                    <span class="param-value-display ms-3" id="discountValue">0.95</span>
+                                                </div>
+                                            </div>
+                                            <div class="setting-item">
+                                                <label class="form-label">探索率</label>
+                                                <div class="d-flex align-items-center">
+                                                    <input type="range" class="form-range param-slider" min="0.01" max="0.5" step="0.01" value="0.085" id="explorationSlider">
+                                                    <span class="param-value-display ms-3" id="explorationValue">0.085</span>
+                                                </div>
+                                            </div>
+                                            <div class="setting-item">
+                                                <label class="form-label">批次大小</label>
+                                                <input type="number" class="form-control" value="32">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 算法配置保存 -->
+                            <div class="mt-4">
+                                <div class="d-flex justify-content-end">
+                                    <button class="btn btn-primary me-2" id="saveAlgorithmBtn">
+                                        <i class="fa fa-save me-1"></i>保存算法参数
+                                    </button>
+                                    <button class="btn btn-outline-secondary" id="resetAlgorithmBtn">
+                                        <i class="fa fa-refresh me-1"></i>恢复默认值
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. 通信设置 -->
+                <section id="communication-config" class="my-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fa fa-wifi me-2"></i>通信设置</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <!-- 串口通信 -->
+                                <div class="col-md-6 mb-4">
+                                    <h6>串口通信设置</h6>
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <div class="setting-item">
+                                                <label class="form-label">串口端口</label>
+                                                <select class="form-select">
+                                                    <option>COM1</option>
+                                                    <option selected>COM2</option>
+                                                    <option>COM3</option>
+                                                    <option>COM4</option>
+                                                </select>
+                                            </div>
+                                            <div class="setting-item">
+                                                <label class="form-label">波特率</label>
+                                                <select class="form-select">
+                                                    <option>9600</option>
+                                                    <option selected>115200</option>
+                                                    <option>230400</option>
+                                                    <option>460800</option>
+                                                </select>
+                                            </div>
+                                            <div class="setting-item">
+                                                <label class="form-label">数据位</label>
+                                                <select class="form-select">
+                                                    <option>7</option>
+                                                    <option selected>8</option>
+                                                </select>
+                                            </div>
+                                            <div class="setting-item">
+                                                <label class="form-label">校验位</label>
+                                                <select class="form-select">
+                                                    <option selected>无</option>
+                                                    <option>奇校验</option>
+                                                    <option>偶校验</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 网络通信 -->
+                                <div class="col-md-6">
+                                    <h6>网络通信设置</h6>
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <div class="setting-item">
+                                                <label class="form-label">IP地址</label>
+                                                <input type="text" class="form-control" value="192.168.1.100">
+                                            </div>
+                                            <div class="setting-item">
+                                                <label class="form-label">子网掩码</label>
+                                                <input type="text" class="form-control" value="255.255.255.0">
+                                            </div>
+                                            <div class="setting-item">
+                                                <label class="form-label">网关</label>
+                                                <input type="text" class="form-control" value="192.168.1.1">
+                                            </div>
+                                            <div class="setting-item">
+                                                <label class="form-label">数据端口</label>
+                                                <input type="number" class="form-control" value="5000">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 通信测试 -->
+                            <div class="mt-4">
+                                <h6>通信测试</h6>
+                                <div class="card bg-light p-3">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-8">
+                                            <p class="mb-0">测试系统通信连接状态，确保数据传输正常</p>
+                                        </div>
+                                        <div class="col-md-4 text-end">
+                                            <button class="btn btn-primary" id="testCommunicationBtn">
+                                                <i class="fa fa-plug me-1"></i>测试通信
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 6. 安全设置 -->
+                <section id="security-config" class="my-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fa fa-shield me-2"></i>安全设置</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <!-- 用户管理 -->
+                                <div class="col-md-6 mb-4">
+                                    <h6>用户管理</h6>
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-sm">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>用户名</th>
+                                                            <th>角色</th>
+                                                            <th>最后登录</th>
+                                                            <th>操作</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>admin</td>
+                                                            <td><span class="badge bg-danger">管理员</span></td>
+                                                            <td>2024-05-20 14:30</td>
+                                                            <td><button class="btn btn-sm btn-outline-primary">编辑</button></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>operator1</td>
+                                                            <td><span class="badge bg-warning">操作员</span></td>
+                                                            <td>2024-05-20 10:15</td>
+                                                            <td><button class="btn btn-sm btn-outline-primary">编辑</button></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>viewer1</td>
+                                                            <td><span class="badge bg-info">查看者</span></td>
+                                                            <td>2024-05-19 16:45</td>
+                                                            <td><button class="btn btn-sm btn-outline-primary">编辑</button></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="text-end mt-2">
+                                                <button class="btn btn-sm btn-primary">添加用户</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 安全策略 -->
+                                <div class="col-md-6">
+                                    <h6>安全策略</h6>
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <div class="setting-item">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" id="autoLogout" checked>
+                                                    <label class="form-check-label" for="autoLogout">
+                                                        <strong>自动注销</strong><br>
+                                                        <small class="text-muted">30分钟无操作自动注销登录</small>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="setting-item">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" id="passwordPolicy" checked>
+                                                    <label class="form-check-label" for="passwordPolicy">
+                                                        <strong>密码策略</strong><br>
+                                                        <small class="text-muted">要求密码长度至少8位，包含数字和字母</small>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="setting-item">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" id="loginAttempts">
+                                                    <label class="form-check-label" for="loginAttempts">
+                                                        <strong>登录尝试限制</strong><br>
+                                                        <small class="text-muted">5次失败登录后锁定账户30分钟</small>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="setting-item">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" id="auditLog" checked>
+                                                    <label class="form-check-label" for="auditLog">
+                                                        <strong>操作审计日志</strong><br>
+                                                        <small class="text-muted">记录所有系统配置修改操作</small>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 密码修改 -->
+                            <div class="mt-4">
+                                <h6>修改密码</h6>
+                                <div class="card bg-light p-3">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label">当前密码</label>
+                                                <input type="password" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label">新密码</label>
+                                                <input type="password" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label">确认新密码</label>
+                                                <input type="password" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="d-flex justify-content-end">
+                                                <button class="btn btn-primary">修改密码</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 7. 备份与恢复 -->
+                <section id="backup-config" class="my-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fa fa-database me-2"></i>备份与恢复</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <!-- 备份设置 -->
+                                <div class="col-md-6 mb-4">
+                                    <h6>备份设置</h6>
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <div class="setting-item">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" id="autoBackup" checked>
+                                                    <label class="form-check-label" for="autoBackup">
+                                                        <strong>自动备份</strong><br>
+                                                        <small class="text-muted">每天凌晨2点自动备份系统配置</small>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="setting-item">
+                                                <label class="form-label">备份频率</label>
+                                                <select class="form-select">
+                                                    <option>每日</option>
+                                                    <option selected>每周</option>
+                                                    <option>每月</option>
+                                                </select>
+                                            </div>
+                                            <div class="setting-item">
+                                                <label class="form-label">备份保留数量</label>
+                                                <input type="number" class="form-control" value="10">
+                                            </div>
+                                            <div class="setting-item">
+                                                <label class="form-label">备份路径</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" value="/backup/config">
+                                                    <button class="btn btn-outline-secondary" type="button">浏览</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 备份列表 -->
+                                <div class="col-md-6">
+                                    <h6>备份文件列表</h6>
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <div class="list-group">
+                                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <strong>config_backup_20240520.zip</strong><br>
+                                                        <small class="text-muted">2024-05-20 02:00:00 | 2.3MB</small>
+                                                    </div>
+                                                    <div>
+                                                        <button class="btn btn-sm btn-outline-primary me-1">恢复</button>
+                                                        <button class="btn btn-sm btn-outline-secondary">下载</button>
+                                                    </div>
+                                                </div>
+                                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <strong>config_backup_20240513.zip</strong><br>
+                                                        <small class="text-muted">2024-05-13 02:00:00 | 2.2MB</small>
+                                                    </div>
+                                                    <div>
+                                                        <button class="btn btn-sm btn-outline-primary me-1">恢复</button>
+                                                        <button class="btn btn-sm btn-outline-secondary">下载</button>
+                                                    </div>
+                                                </div>
+                                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <strong>config_backup_20240506.zip</strong><br>
+                                                        <small class="text-muted">2024-05-06 02:00:00 | 2.1MB</small>
+                                                    </div>
+                                                    <div>
+                                                        <button class="btn btn-sm btn-outline-primary me-1">恢复</button>
+                                                        <button class="btn btn-sm btn-outline-secondary">下载</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 备份操作 -->
+                            <div class="mt-4">
+                                <div class="card bg-light p-3">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-8">
+                                            <p class="mb-0">立即创建系统配置备份，包括所有传感器配置、控制参数和算法设置</p>
+                                        </div>
+                                        <div class="col-md-4 text-end">
+                                            <button class="btn btn-primary me-2" id="createBackupBtn">
+                                                <i class="fa fa-save me-1"></i>创建备份
+                                            </button>
+                                            <button class="btn btn-outline-danger" id="factoryResetBtn">
+                                                <i class="fa fa-refresh me-1"></i>恢复出厂设置
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-light py-3 mt-5">
+        <div class="container-fluid text-center">
+            <p class="mb-0 text-muted">工业控制系统数据管理平台 © 2024 | 版本 v1.0.0</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. PID控制参数滑块联动
+            const kpSlider = document.getElementById('kpSlider');
+            const kpValue = document.getElementById('kpValue');
+            kpSlider.addEventListener('input', function() {
+                kpValue.textContent = parseFloat(this.value).toFixed(2);
+            });
+            
+            const kiSlider = document.getElementById('kiSlider');
+            const kiValue = document.getElementById('kiValue');
+            kiSlider.addEventListener('input', function() {
+                kiValue.textContent = parseFloat(this.value).toFixed(2);
+            });
+            
+            const kdSlider = document.getElementById('kdSlider');
+            const kdValue = document.getElementById('kdValue');
+            kdSlider.addEventListener('input', function() {
+                kdValue.textContent = parseFloat(this.value).toFixed(2);
+            });
+            
+            // 2. MPC控制参数滑块联动
+            const predictionSlider = document.getElementById('predictionSlider');
+            const predictionValue = document.getElementById('predictionValue');
+            predictionSlider.addEventListener('input', function() {
+                predictionValue.textContent = parseFloat(this.value).toFixed(1);
+            });
+            
+            const controlSlider = document.getElementById('controlSlider');
+            const controlValue = document.getElementById('controlValue');
+            controlSlider.addEventListener('input', function() {
+                controlValue.textContent = parseFloat(this.value).toFixed(1);
+            });
+            
+            // 3. 强化学习参数滑块联动
+            const learningRateSlider = document.getElementById('learningRateSlider');
+            const learningRateValue = document.getElementById('learningRateValue');
+            learningRateSlider.addEventListener('input', function() {
+                learningRateValue.textContent = parseFloat(this.value).toFixed(3);
+            });
+            
+            const discountSlider = document.getElementById('discountSlider');
+            const discountValue = document.getElementById('discountValue');
+            discountSlider.addEventListener('input', function() {
+                discountValue.textContent = parseFloat(this.value).toFixed(2);
+            });
+            
+            const explorationSlider = document.getElementById('explorationSlider');
+            const explorationValue = document.getElementById('explorationValue');
+            explorationSlider.addEventListener('input', function() {
+                explorationValue.textContent = parseFloat(this.value).toFixed(3);
+            });
+            
+            // 4. 保存算法参数按钮
+            document.getElementById('saveAlgorithmBtn').addEventListener('click', function() {
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>保存中...';
+                this.disabled = true;
+                
+                // 模拟保存过程
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.disabled = false;
+                    
+                    // 显示成功消息
+                    showAlert('算法参数保存成功！', 'success');
+                }, 1500);
+            });
+            
+            // 5. 通信测试按钮
+            document.getElementById('testCommunicationBtn').addEventListener('click', function() {
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>测试中...';
+                this.disabled = true;
+                
+                // 模拟测试过程
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.disabled = false;
+                    
+                    // 显示测试结果
+                    showAlert('通信测试成功！所有传感器连接正常。', 'success');
+                }, 2000);
+            });
+            
+            // 6. 创建备份按钮
+            document.getElementById('createBackupBtn').addEventListener('click', function() {
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>备份中...';
+                this.disabled = true;
+                
+                // 模拟备份过程
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.disabled = false;
+                    
+                    // 显示备份成功消息
+                    showAlert('系统配置备份创建成功！文件已保存到指定路径。', 'success');
+                }, 2500);
+            });
+            
+            // 7. 恢复出厂设置按钮（添加确认提示）
+            document.getElementById('factoryResetBtn').addEventListener('click', function() {
+                if (confirm('警告：此操作将恢复所有系统设置为出厂默认值，所有自定义配置将丢失。确定要继续吗？')) {
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>恢复中...';
+                    this.disabled = true;
+                    
+                    // 模拟恢复过程
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                        this.disabled = false;
+                        
+                        // 显示恢复成功消息
+                        showAlert('系统已恢复出厂设置，请重新配置系统参数。', 'info');
+                    }, 3000);
+                }
+            });
+            
+            // 8. 恢复算法默认值按钮
+            document.getElementById('resetAlgorithmBtn').addEventListener('click', function() {
+                if (confirm('确定要恢复算法参数为默认值吗？')) {
+                    // 重置PID参数
+                    kpSlider.value = 2.85;
+                    kpValue.textContent = '2.85';
+                    
+                    kiSlider.value = 0.42;
+                    kiValue.textContent = '0.42';
+                    
+                    kdSlider.value = 0.18;
+                    kdValue.textContent = '0.18';
+                    
+                    // 重置MPC参数
+                    predictionSlider.value = 10.0;
+                    predictionValue.textContent = '10.0';
+                    
+                    controlSlider.value = 5.0;
+                    controlValue.textContent = '5.0';
+                    
+                    // 重置强化学习参数
+                    learningRateSlider.value = 0.01;
+                    learningRateValue.textContent = '0.010';
+                    
+                    discountSlider.value = 0.95;
+                    discountValue.textContent = '0.95';
+                    
+                    explorationSlider.value = 0.085;
+                    explorationValue.textContent = '0.085';
+                    
+                    // 显示提示信息
+                    showAlert('算法参数已恢复为默认值。', 'info');
+                }
+            });
+            
+            // 辅助函数：显示提示消息
+            function showAlert(message, type) {
+                const alertClass = type === 'success' ? 'alert-success' : 
+                                 type === 'warning' ? 'alert-warning' : 
+                                 type === 'danger' ? 'alert-danger' : 'alert-info';
+                
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert ${alertClass} alert-dismissible fade show mt-3`;
+                alertDiv.innerHTML = `
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                
+                // 插入到当前section的第一个卡片后面
+                const currentSection = document.querySelector('section:last-of-type');
+                const firstCard = currentSection.querySelector('.card');
+                if (firstCard) {
+                    firstCard.parentNode.insertBefore(alertDiv, firstCard.nextSibling);
+                }
+                
+                // 3秒后自动消失
+                setTimeout(() => {
+                    if (alertDiv.parentNode) {
+                        alertDiv.classList.remove('show');
+                        setTimeout(() => {
+                            if (alertDiv.parentNode) {
+                                alertDiv.parentNode.removeChild(alertDiv);
+                            }
+                        }, 150);
+                    }
+                }, 3000);
+            }
+            
+            // 9. 侧边栏导航点击事件
+            document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // 移除所有导航的激活状态
+                    document.querySelectorAll('.sidebar .nav-link').forEach(item => {
+                        item.classList.remove('active', 'bg-primary', 'text-white');
+                        item.classList.add('text-dark');
+                    });
+                    
+                    // 为当前点击的链接添加激活状态
+                    this.classList.remove('text-dark');
+                    this.classList.add('active', 'bg-primary', 'text-white');
+                    
+                    // 平滑滚动到对应部分
+                    const targetId = this.getAttribute('href');
+                    if (targetId.startsWith('#')) {
+                        const targetElement = document.querySelector(targetId);
+                        if (targetElement) {
+                            window.scrollTo({
+                                top: targetElement.offsetTop - 70,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

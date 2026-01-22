@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>帮助 - 智能压电光催化控制平台</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 图标 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <style>
+        /* 自定义样式 - 与已有页面保持一致 */
+        .sidebar {
+            min-height: calc(100vh - 56px);
+            background-color: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+        }
+        .card-header {
+            background-color: #0d6efd;
+            color: white;
+        }
+        .help-card {
+            transition: transform 0.2s;
+        }
+        .help-card:hover {
+            transform: translateY(-5px);
+        }
+        .nav-link-sub {
+            padding-left: 2.5rem !important;
+            font-size: 0.9rem;
+        }
+        .nav-link-sub.active {
+            background-color: #e7f1ff;
+            color: #0d6efd;
+            border-left: 3px solid #0d6efd;
+        }
+        .help-section {
+            scroll-margin-top: 80px;
+        }
+        .faq-item {
+            border-bottom: 1px solid #dee2e6;
+            padding: 1rem 0;
+        }
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+        .contact-info {
+            padding: 1rem;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+        }
+        .help-icon {
+            font-size: 2rem;
+            color: #0d6efd;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="front.html">
+                <i class="fa fa-industry me-2"></i>智能压电光催化装置控制平台
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="front.html"><i class="fa fa-dashboard me-1"></i>数据中心</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="history.html"><i class="fa fa-history me-1"></i>历史数据</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="config.html"><i class="fa fa-cog me-1"></i>系统配置</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="help.html"><i class="fa fa-question-circle me-1"></i>帮助</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <div class="container-fluid" style="margin-top: 56px;">
+        <div class="row">
+            <!-- 侧边栏 -->
+            <div class="col-md-2 d-none d-md-block sidebar p-3">
+                <ul class="nav flex-column">
+                    <!-- 帮助导航 -->
+                    <li class="nav-item mb-1">
+                        <a class="nav-link active bg-primary text-white" href="#quick-start">
+                            <i class="fa fa-rocket me-2"></i>快速开始
+                        </a>
+                    </li>
+                    
+                    <!-- 常见问题 -->
+                    <li class="nav-item mb-1">
+                        <a class="nav-link text-dark" href="#faq">
+                            <i class="fa fa-question-circle me-2"></i>常见问题
+                        </a>
+                    </li>
+                    
+                    <!-- 系统使用指南 -->
+                    <li class="nav-item mb-1">
+                        <a class="nav-link text-dark" href="#user-guide">
+                            <i class="fa fa-book me-2"></i>系统使用指南
+                        </a>
+                    </li>
+                    
+                    <!-- 故障排除 -->
+                    <li class="nav-item mb-1">
+                        <a class="nav-link text-dark" href="#troubleshooting">
+                            <i class="fa fa-wrench me-2"></i>故障排除
+                        </a>
+                    </li>
+                    
+                    <!-- 技术支持 -->
+                    <li class="nav-item mb-1">
+                        <a class="nav-link text-dark" href="#support">
+                            <i class="fa fa-headphones me-2"></i>技术支持
+                        </a>
+                    </li>
+                    
+                    <!-- 系统信息 -->
+                    <li class="nav-item mb-1">
+                        <a class="nav-link text-dark" href="#system-info">
+                            <i class="fa fa-info-circle me-2"></i>系统信息
+                        </a>
+                    </li>
+                    
+                    <!-- 分隔线 -->
+                    <li class="nav-item my-3">
+                        <hr class="my-1">
+                    </li>
+                    
+                    <!-- 返回数据中心链接 -->
+                    <li class="nav-item mb-2">
+                        <a class="nav-link text-dark" href="front.html">
+                            <i class="fa fa-arrow-left me-2"></i>返回数据中心
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 主内容面板 -->
+            <main class="col-md-10 ms-sm-auto px-4">
+                <!-- 页面标题 -->
+                <div class="d-flex justify-content-between align-items-center mt-4 mb-4">
+                    <h2><i class="fa fa-question-circle text-primary me-2"></i>帮助中心</h2>
+                    <div class="input-group w-auto">
+                        <input type="text" class="form-control" placeholder="搜索帮助内容...">
+                        <button class="btn btn-outline-primary" type="button">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 1. 快速开始 -->
+                <section id="quick-start" class="help-section my-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fa fa-rocket me-2"></i>快速开始</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-4 mb-4">
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="card help-card h-100 text-center">
+                                        <div class="card-body">
+                                            <div class="help-icon">
+                                                <i class="fa fa-dashboard"></i>
+                                            </div>
+                                            <h6>数据中心</h6>
+                                            <p class="small">实时监控压电光催化装置的各项参数，查看装置状态和运行数据。</p>
+                                            <a href="front.html" class="btn btn-sm btn-outline-primary">前往</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="card help-card h-100 text-center">
+                                        <div class="card-body">
+                                            <div class="help-icon">
+                                                <i class="fa fa-history"></i>
+                                            </div>
+                                            <h6>历史数据</h6>
+                                            <p class="small">查询历史运行数据，分析趋势，导出数据报告。</p>
+                                            <a href="history.html" class="btn btn-sm btn-outline-primary">前往</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="card help-card h-100 text-center">
+                                        <div class="card-body">
+                                            <div class="help-icon">
+                                                <i class="fa fa-cog"></i>
+                                            </div>
+                                            <h6>系统配置</h6>
+                                            <p class="small">配置传感器参数、控制算法、通信设置和系统安全选项。</p>
+                                            <a href="config.html" class="btn btn-sm btn-outline-primary">前往</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-6">
+                                    <div class="card help-card h-100 text-center">
+                                        <div class="card-body">
+                                            <div class="help-icon">
+                                                <i class="fa fa-video-camera"></i>
+                                            </div>
+                                            <h6>视频教程</h6>
+                                            <p class="small">观看系统操作教程视频，快速掌握平台使用方法。</p>
+                                            <button class="btn btn-sm btn-outline-primary">观看</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <h6>系统概述</h6>
+                            <div class="card bg-light p-3 mb-3">
+                                <p class="mb-0">
+                                    智能压电光催化控制平台是一个集实时监控、数据分析、智能控制和故障诊断于一体的工业控制系统。系统主要包含以下核心模块：
+                                </p>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            数据中心
+                                            <span class="badge bg-primary rounded-pill">实时</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            历史数据
+                                            <span class="badge bg-success rounded-pill">分析</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            系统配置
+                                            <span class="badge bg-warning rounded-pill">设置</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            数字孪生
+                                            <span class="badge bg-info rounded-pill">仿真</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            强化学习
+                                            <span class="badge bg-danger rounded-pill">智能</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            故障诊断
+                                            <span class="badge bg-secondary rounded-pill">维护</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. 常见问题 -->
+                <section id="faq" class="help-section my-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fa fa-question-circle me-2"></i>常见问题</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="accordion" id="faqAccordion">
+                                <!-- 问题1 -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                            Q1: 如何登录系统？
+                                        </button>
+                                    </h2>
+                                    <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            <p>系统默认管理员账号：<strong>admin</strong>，密码：<strong>admin123</strong>。首次登录后请及时修改密码。</p>
+                                            <p>普通操作员账号需要由管理员在<strong>系统配置 → 安全设置 → 用户管理</strong>中创建。</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 问题2 -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                            Q2: 数据中心的数据更新频率是多少？
+                                        </button>
+                                    </h2>
+                                    <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            <p>数据中心的数据更新频率取决于传感器的采样频率设置：</p>
+                                            <ul>
+                                                <li>实时数据：默认5秒更新一次</li>
+                                                <li>传感器原始数据：根据配置的采样频率（1Hz-50Hz）</li>
+                                                <li>图表刷新：10秒更新一次</li>
+                                            </ul>
+                                            <p>您可以在<strong>系统配置 → 传感器配置</strong>中调整各传感器的采样频率。</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 问题3 -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                            Q3: 如何导出历史数据？
+                                        </button>
+                                    </h2>
+                                    <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            <p>历史数据导出步骤如下：</p>
+                                            <ol>
+                                                <li>进入<strong>历史数据</strong>页面</li>
+                                                <li>设置查询条件（时间范围、数据类型、数据频率）</li>
+                                                <li>点击<strong>查询数据</strong>按钮</li>
+                                                <li>点击<strong>导出数据</strong>按钮</li>
+                                                <li>选择导出格式（CSV或Excel）</li>
+                                            </ol>
+                                            <p class="mb-0">导出的数据文件包含所有查询结果，文件命名格式为：<code>数据导出_YYYYMMDD_HHMMSS.csv</code></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 问题4 -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                            Q4: 系统配置需要管理员权限吗？
+                                        </button>
+                                    </h2>
+                                    <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            <p>是的，系统配置功能需要管理员权限。用户分为三个级别：</p>
+                                            <table class="table table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th>角色</th>
+                                                        <th>权限</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td><span class="badge bg-danger">管理员</span></td>
+                                                        <td>所有权限，包括系统配置、用户管理</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><span class="badge bg-warning">操作员</span></td>
+                                                        <td>数据中心查看、历史数据查询、部分配置调整</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><span class="badge bg-info">查看者</span></td>
+                                                        <td>仅查看权限，不能修改任何配置</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 问题5 -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                                            Q5: 如何查看操作日志？
+                                        </button>
+                                    </h2>
+                                    <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            <p>操作日志查看方法：</p>
+                                            <ul>
+                                                <li>在<strong>系统配置 → 安全设置</strong>中启用操作审计日志功能</li>
+                                                <li>系统会自动记录所有重要操作，包括：登录/注销、配置修改、数据导出等</li>
+                                                <li>日志文件保存在<code>/logs/operation.log</code></li>
+                                                <li>管理员可以在<strong>系统配置 → 备份与恢复</strong>中下载日志文件</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 问题6 -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq6">
+                                            Q6: 如何校准传感器？
+                                        </button>
+                                    </h2>
+                                    <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            <p>传感器校准步骤：</p>
+                                            <ol>
+                                                <li>进入<strong>系统配置 → 传感器配置</strong></li>
+                                                <li>在传感器列表中找到需要校准的传感器</li>
+                                                <li>点击对应的<strong>校准</strong>按钮</li>
+                                                <li>按照校准向导进行操作（通常需要输入标准值）</li>
+                                                <li>保存校准参数</li>
+                                            </ol>
+                                            <p class="text-warning"><i class="fa fa-exclamation-triangle me-1"></i>注意：部分传感器校准需要专业设备，建议由专业人员操作。</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. 系统使用指南 -->
+                <section id="user-guide" class="help-section my-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fa fa-book me-2"></i>系统使用指南</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6>数据中心使用指南</h6>
+                                            <ul class="list-unstyled">
+                                                <li class="mb-2"><i class="fa fa-check-circle text-success me-2"></i>实时监控装置状态</li>
+                                                <li class="mb-2"><i class="fa fa-check-circle text-success me-2"></i>查看传感器数据</li>
+                                                <li class="mb-2"><i class="fa fa-check-circle text-success me-2"></i>调整控制参数</li>
+                                                <li class="mb-2"><i class="fa fa-check-circle text-success me-2"></i>查看数字孪生预测</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6>历史数据分析指南</h6>
+                                            <ul class="list-unstyled">
+                                                <li class="mb-2"><i class="fa fa-check-circle text-success me-2"></i>按时间范围查询数据</li>
+                                                <li class="mb-2"><i class="fa fa-check-circle text-success me-2"></i>数据趋势分析</li>
+                                                <li class="mb-2"><i class="fa fa-check-circle text-success me-2"></i>数据对比功能</li>
+                                                <li class="mb-2"><i class="fa fa-check-circle text-success me-2"></i>数据导出与分享</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6>系统配置指南</h6>
+                                            <ul class="list-unstyled">
+                                                <li class="mb-2"><i class="fa fa-check-circle text-success me-2"></i>传感器参数配置</li>
+                                                <li class="mb-2"><i class="fa fa-check-circle text-success me-2"></i>控制算法调整</li>
+                                                <li class="mb-2"><i class="fa fa-check-circle text-success me-2"></i>通信设置</li>
+                                                <li class="mb-2"><i class="fa fa-check-circle text-success me-2"></i>系统备份与恢复</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h6>系统操作流程图</h6>
+                                    <div class="card bg-light p-3">
+                                        <div class="text-center">
+                                            <div class="d-flex justify-content-center align-items-center flex-wrap">
+                                                <div class="flow-card p-3 m-2 bg-primary text-white rounded shadow-sm">1<br>登录</div>
+                                                <i class="fa fa-arrow-right mx-2 align-self-center"></i>
+                                                <div class="flow-card p-3 m-2 bg-primary text-white rounded shadow-sm">2<br>监控</div>
+                                                <i class="fa fa-arrow-right mx-2 align-self-center"></i>
+                                                <div class="flow-card p-3 m-2 bg-primary text-white rounded shadow-sm">3<br>分析</div>
+                                                <i class="fa fa-arrow-right mx-2 align-self-center"></i>
+                                                <div class="flow-card p-3 m-2 bg-primary text-white rounded shadow-sm">4<br>配置</div>
+                                                <i class="fa fa-arrow-right mx-2 align-self-center"></i>
+                                                <div class="flow-card p-3 m-2 bg-primary text-white rounded shadow-sm">5<br>优化</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            <style>
+                            .flow-card {
+                                min-width: 70px;
+                                text-align: center;
+                                transition: transform 0.2s; 
+                            }
+                            .flow-card:hover {
+                                transform: scale(1.05);
+                            }
+                            </style>
+                            
+                            <div class="mt-4">
+                                <h6>系统功能特点</h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <div class="flex-grow-1">
+                                                <h6>实时监控</h6>
+                                                <p class="small mb-0">实时采集和显示装置运行数据，提供直观的数据可视化界面。</p>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="flex-grow-1">
+                                                <h6>智能控制</h6>
+                                                <p class="small mb-0">基于强化学习和模型预测控制算法，实现装置的智能化控制。</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <div class="flex-grow-1">
+                                                <h6>数据分析</h6>
+                                                <p class="small mb-0">提供历史数据查询、趋势分析和数据导出功能，支持决策分析。</p>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="flex-grow-1">
+                                                <h6>故障诊断</h6>
+                                                <p class="small mb-0">自动检测装置故障，提供故障诊断和补偿建议，提高系统可靠性。</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>        
+
+                <!-- 4. 故障排除 -->
+                <section id="troubleshooting" class="help-section my-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fa fa-wrench me-2"></i>故障排除</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>故障现象</th>
+                                            <th>可能原因</th>
+                                            <th>解决方法</th>
+                                            <th>紧急程度</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>传感器数据无更新</td>
+                                            <td>通信连接中断、传感器故障</td>
+                                            <td>
+                                                <ol class="mb-0 ps-3">
+                                                    <li>检查通信线缆连接</li>
+                                                    <li>重启传感器</li>
+                                                    <li>检查传感器配置</li>
+                                                </ol>
+                                            </td>
+                                            <td><span class="badge bg-warning">中等</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>控制输出异常</td>
+                                            <td>控制算法参数错误、执行器故障</td>
+                                            <td>
+                                                <ol class="mb-0 ps-3">
+                                                    <li>检查控制算法参数</li>
+                                                    <li>切换到手动模式测试</li>
+                                                    <li>检查执行器状态</li>
+                                                </ol>
+                                            </td>
+                                            <td><span class="badge bg-danger">高</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>系统界面卡顿</td>
+                                            <td>浏览器缓存问题、网络延迟</td>
+                                            <td>
+                                                <ol class="mb-0 ps-3">
+                                                    <li>清除浏览器缓存</li>
+                                                    <li>刷新页面</li>
+                                                    <li>检查网络连接</li>
+                                                </ol>
+                                            </td>
+                                            <td><span class="badge bg-info">低</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>数据导出失败</td>
+                                            <td>存储空间不足、文件权限问题</td>
+                                            <td>
+                                                <ol class="mb-0 ps-3">
+                                                    <li>检查存储空间</li>
+                                                    <li>检查文件写入权限</li>
+                                                    <li>重启数据导出服务</li>
+                                                </ol>
+                                            </td>
+                                            <td><span class="badge bg-warning">中等</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>用户登录失败</td>
+                                            <td>密码错误、账户锁定、系统故障</td>
+                                            <td>
+                                                <ol class="mb-0 ps-3">
+                                                    <li>确认用户名和密码</li>
+                                                    <li>联系管理员解锁账户</li>
+                                                    <li>检查认证服务状态</li>
+                                                </ol>
+                                            </td>
+                                            <td><span class="badge bg-danger">高</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h6>故障诊断工具</h6>
+                                <div class="card bg-light p-3">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-8">
+                                            <p class="mb-0">使用系统内置的故障诊断工具，可以自动检测和诊断常见问题。</p>
+                                        </div>
+                                        <div class="col-md-4 text-end">
+                                            <button class="btn btn-primary" id="runDiagnosticBtn">
+                                                <i class="fa fa-stethoscope me-1"></i>运行系统诊断
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h6>故障上报流程</h6>
+                                <div class="card p-3">
+                                    <div class="row">
+                                        <div class="col-md-3 text-center">
+                                            <div class="step-item bg-primary text-white rounded d-inline-flex justify-content-center align-items-center">1</div>
+                                            <p class="mt-2 mb-0">发现问题</p>
+                                        </div>
+                                        <div class="col-md-3 text-center">
+                                            <div class="step-item bg-primary text-white rounded d-inline-flex justify-content-center align-items-center">2</div>
+                                            <p class="mt-2 mb-0">初步排查</p>
+                                        </div>
+                                        <div class="col-md-3 text-center">
+                                            <div class="step-item bg-primary text-white rounded d-inline-flex justify-content-center align-items-center">3</div>
+                                            <p class="mt-2 mb-0">详细诊断</p>
+                                        </div>
+                                        <div class="col-md-3 text-center">
+                                            <div class="step-item bg-primary text-white rounded d-inline-flex justify-content-center align-items-center">4</div>
+                                            <p class="mt-2 mb-0">解决问题</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <style>
+                            .step-item {
+                                width: 60px; 
+                                height: 40px; 
+                                font-size: 16px;
+                            }
+                            </style>
+                        </div>
+                    </div>
+                </section>
+                <!-- 5. 技术支持 -->
+                <section id="support" class="help-section my-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fa fa-headphones me-2"></i>技术支持</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="card h-100">
+                                        <div class="card-body text-center">
+                                            <div class="help-icon">
+                                                <i class="fa fa-phone"></i>
+                                            </div>
+                                            <h6>电话支持</h6>
+                                            <p class="mb-2">技术支持热线：</p>
+                                            <h5 class="text-primary">400-123-4567</h5>
+                                            <p class="small text-muted">工作时间：周一至周五 9:00-18:00</p>
+                                            <button class="btn btn-outline-primary">拨打热线</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card h-100">
+                                        <div class="card-body text-center">
+                                            <div class="help-icon">
+                                                <i class="fa fa-envelope"></i>
+                                            </div>
+                                            <h6>邮件支持</h6>
+                                            <p class="mb-2">技术支持邮箱：</p>
+                                            <h5 class="text-primary">support@system.com</h5>
+                                            <p class="small text-muted">24小时内回复</p>
+                                            <button class="btn btn-outline-primary">发送邮件</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card h-100">
+                                        <div class="card-body text-center">
+                                            <div class="help-icon">
+                                                <i class="fa fa-comments"></i>
+                                            </div>
+                                            <h6>在线客服</h6>
+                                            <p class="mb-2">实时在线支持：</p>
+                                            <h5 class="text-primary">在线咨询</h5>
+                                            <p class="small text-muted">工作时间：9:00-21:00</p>
+                                            <button class="btn btn-outline-primary">开始咨询</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h6>问题反馈</h6>
+                                <div class="card bg-light p-3">
+                                    <form id="feedbackForm">
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label">反馈类型</label>
+                                                <select class="form-select" required>
+                                                    <option value="">请选择反馈类型</option>
+                                                    <option value="bug">系统错误</option>
+                                                    <option value="suggestion">功能建议</option>
+                                                    <option value="question">使用问题</option>
+                                                    <option value="other">其他</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">紧急程度</label>
+                                                <select class="form-select" required>
+                                                    <option value="low">低 - 一般咨询</option>
+                                                    <option value="medium" selected>中 - 功能问题</option>
+                                                    <option value="high">高 - 系统故障</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">问题描述</label>
+                                            <textarea class="form-control" rows="3" placeholder="请详细描述您遇到的问题..." required></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">联系方式</label>
+                                            <input type="email" class="form-control" placeholder="请输入您的邮箱或电话" required>
+                                        </div>
+                                        <div class="text-end">
+                                            <button type="submit" class="btn btn-primary">提交反馈</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 6. 系统信息 -->
+                <section id="system-info" class="help-section my-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fa fa-info-circle me-2"></i>系统信息</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>系统版本信息</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-sm">
+                                            <tbody>
+                                                <tr>
+                                                    <th scope="row">系统版本</th>
+                                                    <td>v1.0.0</td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">发布时间</th>
+                                                    <td>2024-05-20</td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">内核版本</th>
+                                                    <td>Linux 5.15.0</td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">数据库版本</th>
+                                                    <td>MySQL 8.0</td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">前端框架</th>
+                                                    <td>Bootstrap 5.3.2</td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">图表库</th>
+                                                    <td>Chart.js 4.4.8</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>系统要求</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-sm">
+                                            <tbody>
+                                                <tr>
+                                                    <th scope="row">浏览器</th>
+                                                    <td>Chrome 90+, Firefox 88+, Edge 90+</td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">分辨率</th>
+                                                    <td>推荐 1920×1080，最低 1366×768</td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">网络要求</th>
+                                                    <td>局域网或稳定互联网连接</td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">操作系统</th>
+                                                    <td>Windows 10+, Linux, macOS</td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">内存要求</th>
+                                                    <td>最低 4GB，推荐 8GB</td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">存储空间</th>
+                                                    <td>最低 10GB，推荐 50GB</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h6>更新日志</h6>
+                                <div class="card bg-light p-3">
+                                    <div class="accordion" id="updateLogAccordion">
+                                        <!-- 更新日志1 -->
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header">
+                                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#log1">
+                                                    v1.0.0 (2024-05-20)
+                                                </button>
+                                            </h2>
+                                            <div id="log1" class="accordion-collapse collapse show" data-bs-parent="#updateLogAccordion">
+                                                <div class="accordion-body">
+                                                    <ul class="mb-0">
+                                                        <li>初始版本发布</li>
+                                                        <li>实现数据中心实时监控功能</li>
+                                                        <li>实现历史数据查询与分析功能</li>
+                                                        <li>实现系统配置管理功能</li>
+                                                        <li>集成数字孪生系统</li>
+                                                        <li>集成强化学习控制算法</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- 更新日志2 -->
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#log2">
+                                                    v0.9.0 (2024-04-15)
+                                                </button>
+                                            </h2>
+                                            <div id="log2" class="accordion-collapse collapse" data-bs-parent="#updateLogAccordion">
+                                                <div class="accordion-body">
+                                                    <ul class="mb-0">
+                                                        <li>优化数据可视化图表</li>
+                                                        <li>改进用户界面交互体验</li>
+                                                        <li>增加传感器数据融合功能</li>
+                                                        <li>优化故障诊断算法</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- 更新日志3 -->
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#log3">
+                                                    v0.8.0 (2024-03-10)
+                                                </button>
+                                            </h2>
+                                            <div id="log3" class="accordion-collapse collapse" data-bs-parent="#updateLogAccordion">
+                                                <div class="accordion-body">
+                                                    <ul class="mb-0">
+                                                        <li>首次内测版本发布</li>
+                                                        <li>实现基本的数据采集功能</li>
+                                                        <li>实现基础控制算法</li>
+                                                        <li>搭建系统基础框架</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h6>版权声明</h6>
+                                <div class="card p-3">
+                                    <p class="mb-0">
+                                        智能压电光催化控制平台 © 2024 版权所有。<br>
+                                        本系统及相关文档受版权法保护，未经授权不得复制、传播或用于商业目的。<br>
+                                        系统名称、Logo及相关图形均为注册商标。<br>
+                                        技术支持：工业控制系统数据管理平台开发团队
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-light py-3 mt-5">
+        <div class="container-fluid text-center">
+            <p class="mb-0 text-muted">工业控制系统数据管理平台 © 2024 | 版本 v1.0.0</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. 侧边栏导航点击事件
+            document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // 移除所有导航的激活状态
+                    document.querySelectorAll('.sidebar .nav-link').forEach(item => {
+                        item.classList.remove('active', 'bg-primary', 'text-white');
+                        item.classList.add('text-dark');
+                    });
+                    
+                    // 为当前点击的链接添加激活状态
+                    this.classList.remove('text-dark');
+                    this.classList.add('active', 'bg-primary', 'text-white');
+                    
+                    // 平滑滚动到对应部分
+                    const targetId = this.getAttribute('href');
+                    if (targetId.startsWith('#')) {
+                        const targetElement = document.querySelector(targetId);
+                        if (targetElement) {
+                            window.scrollTo({
+                                top: targetElement.offsetTop - 70,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }
+                });
+            });
+            
+            // 2. 运行系统诊断按钮
+            document.getElementById('runDiagnosticBtn').addEventListener('click', function() {
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>诊断中...';
+                this.disabled = true;
+                
+                // 模拟诊断过程
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.disabled = false;
+                    
+                    // 显示诊断结果
+                    showAlert('系统诊断完成：所有功能正常，无发现异常问题。', 'success');
+                }, 2000);
+            });
+            
+            // 3. 提交反馈表单
+            document.getElementById('feedbackForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>提交中...';
+                submitBtn.disabled = true;
+                
+                // 模拟提交过程
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                    
+                    // 显示提交成功消息
+                    showAlert('反馈提交成功！我们的技术支持团队将在24小时内联系您。', 'success');
+                    
+                    // 重置表单
+                    this.reset();
+                }, 1500);
+            });
+            
+            // 辅助函数：显示提示消息
+            function showAlert(message, type) {
+                const alertClass = type === 'success' ? 'alert-success' : 
+                                 type === 'warning' ? 'alert-warning' : 
+                                 type === 'danger' ? 'alert-danger' : 'alert-info';
+                
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert ${alertClass} alert-dismissible fade show mt-3`;
+                alertDiv.innerHTML = `
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                
+                // 插入到当前section的第一个卡片后面
+                const currentSection = document.querySelector('section:last-of-type');
+                const firstCard = currentSection.querySelector('.card');
+                if (firstCard) {
+                    firstCard.parentNode.insertBefore(alertDiv, firstCard.nextSibling);
+                }
+                
+                // 3秒后自动消失
+                setTimeout(() => {
+                    if (alertDiv.parentNode) {
+                        alertDiv.classList.remove('show');
+                        setTimeout(() => {
+                            if (alertDiv.parentNode) {
+                                alertDiv.parentNode.removeChild(alertDiv);
+                            }
+                        }, 150);
+                    }
+                }, 3000);
+            }
+            
+            // 4. 搜索功能
+            const searchInput = document.querySelector('input[placeholder="搜索帮助内容..."]');
+            const searchBtn = document.querySelector('button.btn-outline-primary');
+            
+            searchBtn.addEventListener('click', function() {
+                performSearch();
+            });
+            
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+            
+            function performSearch() {
+                const searchTerm = searchInput.value.trim();
+                if (searchTerm) {
+                    // 这里可以添加实际的搜索逻辑
+                    showAlert(`正在搜索: "${searchTerm}"`, 'info');
+                    
+                    // 模拟搜索过程
+                    setTimeout(() => {
+                        // 这里可以显示搜索结果或跳转到相关内容
+                        console.log(`搜索关键词: ${searchTerm}`);
+                    }, 500);
+                }
+            }
+            
+            // 5. 自动更新侧边栏激活状态
+            window.addEventListener('scroll', function() {
+                const sections = [
+                    {id: 'quick-start', link: '.sidebar .nav-link[href="#quick-start"]'},
+                    {id: 'faq', link: '.sidebar .nav-link[href="#faq"]'},
+                    {id: 'user-guide', link: '.sidebar .nav-link[href="#user-guide"]'},
+                    {id: 'troubleshooting', link: '.sidebar .nav-link[href="#troubleshooting"]'},
+                    {id: 'support', link: '.sidebar .nav-link[href="#support"]'},
+                    {id: 'system-info', link: '.sidebar .nav-link[href="#system-info"]'}
+                ];
+                
+                let currentSection = '';
+                
+                sections.forEach(section => {
+                    const element = document.getElementById(section.id);
+                    if (element) {
+                        const rect = element.getBoundingClientRect();
+                        if (rect.top <= 150 && rect.bottom >= 150) {
+                            currentSection = section.id;
+                        }
+                    }
+                });
+                
+                // 更新侧边栏激活状态
+                if (currentSection) {
+                    document.querySelectorAll('.sidebar .nav-link').forEach(item => {
+                        item.classList.remove('active', 'bg-primary', 'text-white');
+                        item.classList.add('text-dark');
+                    });
+                    
+                    const activeLink = document.querySelector(`.sidebar .nav-link[href="#${currentSection}"]`);
+                    if (activeLink) {
+                        activeLink.classList.remove('text-dark');
+                        activeLink.classList.add('active', 'bg-primary', 'text-white');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
